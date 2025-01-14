@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Repair_Notification_System.props" />
+</Project>
