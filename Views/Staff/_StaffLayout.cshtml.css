@@ -1,10 +1,100 @@
 ﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+/* Sidebar */
+#sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 250px; /* Default sidebar width */
+    background-color: #1b6ec2 !important;
+    z-index: 1000;
+    transition: transform 0.3s ease; /* Smooth transition for sliding effect */
+    text-align: right;
+    font-size: 20px;
+    font-family: 'Kanit', sans-serif;
+    font-weight: 400;
+    text-shadow: 
+    1px 1px 0px white,   /* Top-left shadow */
+    -1px -1px 0px white, /* Bottom-right shadow */
+    1px -1px 0px white,  /* Top-right shadow */
+    -1px 1px 0px white;  /* Bottom-left shadow */
+}
+
+/* Hamburger Icon inside sidebar (slides with sidebar) */
+.hamburger-icon-inside {
+    display: none;
+    cursor: pointer;
+    color: #000000;
+    font-size: 1.5rem;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 1050;
+    background-color: transparent;
+    border: none;
+    transition: transform 0.3s ease;
+}
+
+/* Hamburger Icon outside sidebar (fixed at top-right) */
+.hamburger-icon-outside {
+    display: block;
+    cursor: pointer;
+    color: #000000;
+    font-size: 1.5rem;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    background-color: transparent;
+    border: none;
+    transition: transform 0.3s ease;
+}
+
+/* For small screens */
+@media (max-width: 768px) {
+    #sidebar {
+        transform: translateX(-250px); /* Initially hide sidebar */
+    }
+
+    main {
+        margin-left: 0; /* Content takes full width */
+    }
+
+    /* Show sidebar when toggled */
+    #sidebar.show {
+        transform: translateX(0); /* Show the sidebar */
+    }
+
+    /* Show hamburger icon inside sidebar when sidebar is shown */
+    #sidebar.show .hamburger-icon-inside {
+        display: block;
+    }
+
+    /* Show hamburger icon outside sidebar when sidebar is hidden */
+    #sidebar:not(.show) .hamburger-icon-outside {
+        display: block;
+    }
+}
+
+/* Hide hamburger icons on larger screens */
+@media (min-width: 769px) {
+    .hamburger-icon-inside, .hamburger-icon-outside {
+        display: none;
+    }
+}
+
+
 a.navbar-brand {
   white-space: normal;
   text-align: center;
   word-break: break-all;
+}
+
+.nav-item {
+  align-items: center;
+  text-align: center;
 }
 
 .navbar-nav {
