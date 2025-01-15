@@ -18,7 +18,17 @@ public class HomeController : Controller
         return View();
     }
 
-    public IActionResult Privacy()
+    public IActionResult Repair()
+    {
+        return View();
+    }
+    
+    public IActionResult Tutorial()
+    {
+        return View();
+    }
+    
+    public IActionResult ContactUS()
     {
         return View();
     }
