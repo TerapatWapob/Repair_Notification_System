@@ -1,6 +1,113 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "เพิ่มข้อมูลแจ้งซ่อม";
 }
-<h1>@ViewData["Title"]</h1>
+    <style>
+        .header-bg {
+            background-color: #3be8ff;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        .disabled-field {
+            background-color: #f0f0f0; /* Light gray */
+            color: #6c757d; /* Dark gray text */
+            cursor: not-allowed; /* Change the cursor to indicate non-clickable */
+        }
+                /* Custom triangle indicator for the dropdown */
+        .custom-select {
+            position: relative;
+        }
 
-<p>Use this page to detail your site's Repair policy.</p>
+        .custom-select select {
+            width: 100%;
+            padding-right: 30px; /* Space for the triangle */
+        }
+
+        .custom-select:after {
+            content: "";
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid #000; /* Black triangle */
+            pointer-events: none;
+        }
+    </style>
+    <div class="container mt-5">
+        <div class="header-bg text-center mb-4">
+            <h2>เพิ่มข้อมูลแจ้งซ่อม</h2>
+        </div>
+        <form>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="subject" class="form-label">เรื่อง</label>
+                    <input type="text" class="form-control" id="subject" placeholder="กรุณากรอกเรื่อง">
+                </div>
+                <div class="col-md-6">
+                    <label for="department" class="form-label">สังกัดหน่วยงาน</label>
+                    <input type="text" class="form-control" id="department" placeholder="กรุณากรอกสังกัดหน่วยงาน">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="email" class="form-label">อีเมล</label>
+                    <input type="email" class="form-control" id="email" placeholder="กรุณากรอกอีเมล">
+                </div>
+                <div class="col-md-6">
+                    <label for="problemType" class="form-label">ประเภทของปัญหา</label>
+                    <div class="custom-select">
+                        <select class="form-control" id="problemType">
+                            <option value="" disabled selected>กรุณาเลือกประเภทของปัญหา</option>
+                            <option value="hardware">ปัญหาเกี่ยวกับฮาร์ดแวร์/อุปกรณ์ต่างๆ</option>
+                            <option value="software">ปัญหาเกี่ยวกับซอฟต์แวร์ฝโปรแกรมต่างๆ</option>
+                            <option value="network">ปัญหาด้านเครือข่าย (เช่น อินเทอร์เน็ตช้า ไม่สามารถเชื่อต่ออินเทอร์เน็ตได้)</option>
+                            <option value="other">อื่นๆ</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="phoneNumber" class="form-label">เบอร์โทรศัพท์ที่สามารถติดต่อได้</label>
+                    <input type="text" class="form-control" id="phoneNumber" placeholder="กรุณากรอกเบอร์โทรศัพท์" oninput="restrictToNumbers(event)" />
+                </div>
+                <div class="col-md-6">
+                    <label for="reportDate" class="form-label">วันที่แจ้ง</label>
+                    <input type="text" class="form-control disabled-field" id="reportDate" disabled>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="problemDescription" class="form-label">ปัญหาที่พบ</label>
+                <textarea class="form-control" id="problemDescription" rows="4" placeholder="กรุณากรอกปัญหาที่พบ"></textarea>
+            </div>
+            <div>
+            <button type="submit" class="btn btn-primary ms-auto">ส่งข้อมูล</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Get today's date in the format DD/MM/YYYY
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // Month is zero-based
+        const year = today.getFullYear();
+        
+        // Format the date to DD/MM/YYYY
+        const formattedDate = `${day}/${month}/${year}`;
+        
+        // Set the formatted date in the "วันที่แจ้ง" field
+        document.getElementById('reportDate').value = formattedDate;
+    </script>
+
+    <script>
+    function restrictToNumbers(event) {
+        // Allow only numeric values
+        input.value = input.value.replace(/[^0-9+]/g, '').slice(0, 14);
+    }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
