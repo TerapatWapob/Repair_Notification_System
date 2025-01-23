@@ -1,10 +1,51 @@
 ﻿@{
-    ViewData["Title"] = "AdminLogin";
-}
-@{
     Layout = "_StaffLayout"; // Specify a custom layout
 }
+<br>
+<br>
+<style>
+    .login-header {
+      background-color: #007BFF; /* Blue background */
+      color: white;
+      padding: 10px;
+      text-align: center;
+      border-radius: 10px 10px 0 0;
+      text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black; /* Black stroke */
+    }
+    .login-form {
+      background-color: #f0f8ff; /* Light blue */
+      padding: 20px;
+      border-radius: 0 0 10px 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    .form-container {
+      max-width: 400px;
+      margin: 50px auto;
+    }
+  </style>
 
-<div class="text-center">
-    <h1 class="display-4">AdminLogin</h1>
-</div>
+  <div class="form-container">
+    <!-- Header -->
+    <div class="login-header">
+      <h3>เข้าสู่ระบบแจ้งซ่อมหลังบ้าน</h3>
+    </div>
+    <!-- Form -->
+    <div class="login-form">
+      <form>
+        <!-- ชื่อบัญชี -->
+        <div class="mb-3">
+          <label for="username" class="form-label">ชื่อบัญชี</label>
+          <input type="text" class="form-control" id="username" placeholder="กรอกชื่อบัญชี">
+        </div>
+        <!-- รหัสผ่าน -->
+        <div class="mb-3">
+          <label for="password" class="form-label">รหัสผ่าน</label>
+          <input type="password" class="form-control" id="password" placeholder="กรอกรหัสผ่าน">
+        </div>
+        <!-- Submit Button -->
+        <div class="text-center">
+          <button type="submit" class="btn btn-primary">เข้าสู่ระบบ</button>
+        </div>
+      </form>
+    </div>
+  </div>

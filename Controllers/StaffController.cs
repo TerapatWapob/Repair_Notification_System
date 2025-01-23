@@ -28,7 +28,7 @@ public class StaffController : Controller
         return View();
     }
     
-    public IActionResult AdminAcccountEdit()
+    public IActionResult AdminAccountEdit()
     {
         return View();
     }
