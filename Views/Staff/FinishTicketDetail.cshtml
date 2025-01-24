@@ -1,10 +1,84 @@
 ﻿@{
-    ViewData["Title"] = "FinishTicketDetail";
-}
-@{
     Layout = "_StaffLayout"; // Specify a custom layout
 }
+<style>
+  .finishticketadd-header {
+    background-color: #007BFF; /* Blue background */
+    color: white;
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+    text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black; /* Black stroke */
+  }
+  .finishticketadd-form {
+    background-color: #f0f8ff; /* Light blue */
+    padding: 20px;
+    border-radius: 0 0 10px 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+  .form-container {
+    max-width: 500px;
+    margin: 50px auto;
+  }
+  .btn-green {
+    background-color: #28a745; /* Green button */
+    color: white;
+    border: 2px solid white;
+    border-radius: 5px;
+  }
+  .btn-green:hover {
+    background-color: #218838;
+    color: white;
+  }
+</style>
+    
+  <div class="form-container">
+    <!-- Header -->
+    <div class="finishticketadd-header">
+      <h3>รายการที่ดำเนินการเรียบร้อยแล้ว</h3>
+    </div>
+    <!-- Form -->
+    <div class="finishticketadd-form">
+      <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="subject" class="form-label">เรื่อง</label>
+                    <input type="text" class="form-control" id="subject">
+                </div>
+                <div class="col-md-6">
+                    <label for="department" class="form-label">สังกัดหน่วยงาน</label>
+                    <input type="text" class="form-control" id="department">
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="email" class="form-label">อีเมล</label>
+                    <input type="email" class="form-control" id="email">
+                </div>
+                <div class="col-md-6">
+                    <label for="problemType" class="form-label">ประเภทของปัญหา</label>
+                    <div class="custom-select">
+                        <select class="form-control" id="problemType"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="phoneNumber" class="form-label">เบอร์โทรศัพท์ที่สามารถติดต่อได้</label>
+                    <input type="text" class="form-control" id="phoneNumber"/>
+                </div>
+                <div class="col-md-6">
+                    <label for="reportDate" class="form-label">วันที่แจ้ง</label>
+                    <input type="text" class="form-control disabled-field" id="reportDate" disabled>
+                </div>
+            </div>
+            <div class="mb-3">
+                <label for="problemDescription" class="form-label">ปัญหาที่พบ</label>
+                <textarea class="form-control" id="problemDescription" rows="4"></textarea>
+            </div>
+            <div style="display: flex; justify-content: flex-end;">
+            <button type="submit" class="btn btn-primary ms-auto">ย้อนกลับ</button>
+            </div>
+    </div>
+  </div>
 
-<div class="text-center">
-    <h1 class="display-4">FinishTicketDetail</h1>
-</div>
+    
