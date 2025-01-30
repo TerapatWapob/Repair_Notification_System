@@ -6,11 +6,16 @@ using System.Numerics;
 
 namespace RPS_DB.Models
 {
+    public enum AgencyStatus
+    {
+    Enabled,
+    Disabled
+    }
     public class Agency
     {
         public Agency()
         {
-            Tickets = new List<Ticket>(); // Initialize the collection by default
+            Tickets = new List<Ticket>();
         }
 
         [Key]
@@ -18,6 +23,7 @@ namespace RPS_DB.Models
 
         [MaxLength(100)]
         public required string AgencyName { get; set; }
+        public AgencyStatus Status {get; set;} = AgencyStatus.Enabled;
 
         public virtual ICollection<Ticket> Tickets { get; set; }
     }
@@ -58,7 +64,7 @@ namespace RPS_DB.Models
         public BigInteger AgencyID { get; set; }
 
         [ForeignKey("AgencyID")]
-        public virtual required Agency Agency { get; set; }
+        public Agency? Agency { get; set; }
     }
 
     public enum TicketState
