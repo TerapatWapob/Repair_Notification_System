@@ -1,6 +1,27 @@
 ﻿<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<style>
+    .header-bg {
+        background-color: #007BFF; /* Blue background */
+        color: white;
+        padding: 12px;
+        text-align: center;
+        border-radius: 10px;
+        text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black; /* Black stroke */
+    }
+    .col-md-6 {
+        background-color: #007BFF; /* Blue background */
+        color: white;
+        padding: 10px;
+        border-radius: 0px;
+    }
+    /* Responsive text size using clamp */
+    .responsive-text {
+        font-size: clamp(16px, 5vw, 20px); /* Font size adjusts with screen size */
+    }
+</style>
 
 <br>
+
 <div class="text-left d-flex justify-content-between align-items-center">
     <h4>รายการแจ้งซ่อมในระบบ</h4>
     <div class="input-group input-group-sm" style="max-width: 300px;">
@@ -8,5 +29,22 @@
         <button class="btn btn-primary text-white" type="button">
             <i class="fas fa-search"></i> Search
         </button>
+    </div>
+</div>
+<!-- Add Loop -->
+<div class="container mt-5">
+    <div class="header-bg text-center mb-4">
+        <div class="row">
+            <div class="col-6 text-start responsive-text">Row 1, Col 1</div>
+            <div class="col-6 text-end responsive-text">Row 1, Col 2</div>
+        </div>
+        <div class="row">
+            <div class="col-6 text-start responsive-text">Row 2, Col 1</div>
+            <div class="col-6 text-end responsive-text">Row 2, Col 2</div>
+        </div>
+        <div class="row">
+            <div class="col-6 text-start responsive-text">Row 3, Col 1</div>
+            <div class="col-6 text-end responsive-text">Row 3, Col 2</div>
+        </div>
     </div>
 </div>
