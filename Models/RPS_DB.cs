@@ -19,7 +19,7 @@ namespace RPS_DB.Models
         }
 
         [Key]
-        public BigInteger ID { get; set; }
+        public long ID { get; set; }
 
         [MaxLength(100)]
         public required string AgencyName { get; set; }
@@ -31,7 +31,7 @@ namespace RPS_DB.Models
     public class Ticket
     {
         [Key]
-        public BigInteger ID { get; set; }
+        public long ID { get; set; }
 
         [MaxLength(100)]
         public required string Name { get; set; }
@@ -61,7 +61,7 @@ namespace RPS_DB.Models
         [Required]
         public TicketState State { get; set; }
 
-        public BigInteger AgencyID { get; set; }
+        public long AgencyID { get; set; }
 
         [ForeignKey("AgencyID")]
         public Agency? Agency { get; set; }
@@ -77,7 +77,7 @@ namespace RPS_DB.Models
     public class User
     {
         [Key]
-        public BigInteger ID { get; set; }
+        public long ID { get; set; }
 
         [MaxLength(100)]
         public required string Name { get; set; }

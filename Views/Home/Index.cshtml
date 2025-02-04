@@ -1,22 +1,29 @@
-﻿<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+﻿@model List<RPS_DB.Models.Ticket>
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 <style>
     .header-bg {
-        background-color: #007BFF; /* Blue background */
+        background-color: #007BFF;
         color: white;
         padding: 12px;
         text-align: center;
         border-radius: 10px;
-        text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black; /* Black stroke */
+        text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
     }
-    .col-md-6 {
-        background-color: #007BFF; /* Blue background */
+    .col-9 {
+        background-color: #007BFF;
         color: white;
         padding: 10px;
         border-radius: 0px;
     }
-    /* Responsive text size using clamp */
+    .col-3 {
+        background-color: #007BFF;
+        color: white;
+        padding: 10px;
+        border-radius: 0px;
+    }
     .responsive-text {
-        font-size: clamp(16px, 5vw, 20px); /* Font size adjusts with screen size */
+        font-size: clamp(16px, 4vw, 24px); /* Responsive ticket text size */
     }
 </style>
 
@@ -31,20 +38,32 @@
         </button>
     </div>
 </div>
-<!-- Add Loop -->
+
 <div class="container mt-5">
     <div class="header-bg text-center mb-4">
-        <div class="row">
-            <div class="col-6 text-start responsive-text">Row 1, Col 1</div>
-            <div class="col-6 text-end responsive-text">Row 1, Col 2</div>
-        </div>
-        <div class="row">
-            <div class="col-6 text-start responsive-text">Row 2, Col 1</div>
-            <div class="col-6 text-end responsive-text">Row 2, Col 2</div>
-        </div>
-        <div class="row">
-            <div class="col-6 text-start responsive-text">Row 3, Col 1</div>
-            <div class="col-6 text-end responsive-text">Row 3, Col 2</div>
-        </div>
+        @foreach (var ticket in Model)
+        {
+            // Check if StartDate and EndDate are not null and the difference is less than or equal to 7 days
+            if (ticket.StartDate != null && ticket.EndDate != null)
+            {
+                var timeSpan = ticket.EndDate - ticket.StartDate;
+                if (timeSpan.HasValue && timeSpan.Value.Days <= 14)
+                {
+                    <div class="row">
+                        <div class="col-3 text-start responsive-text">เรื่อง</div>
+                        <div class="col-9 text-end responsive-text">@ticket.Topic (@ticket.Name)</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3 text-start responsive-text">สถานะ</div>
+                        <div class="col-9 text-end responsive-text">@ticket.State</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3 text-start responsive-text">วันที่แจ้ง</div>
+                        <div class="col-9 text-end responsive-text">@ticket.StartDate?.ToString("dd/MM/yyyy")</div>
+                    </div>
+                    <hr/>
+                }
+            }
+        }
     </div>
 </div>
