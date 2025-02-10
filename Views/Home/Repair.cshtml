@@ -1,54 +1,63 @@
-﻿<div class="container mt-5">
+﻿@using RPS_DB.Models;
+@model Ticket;
+
+<div class="container mt-5">
     <div class="header-bg text-center mb-4">
         <h2>เพิ่มข้อมูลแจ้งซ่อม</h2>
     </div>
-    <form method="post" asp-action="Repair" asp-controller="Home">
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="subject" class="form-label">เรื่อง</label>
-                <input type="text" class="form-control" id="subject" name="subject" placeholder="กรุณากรอกเรื่อง" required>
+        <form method="post" asp-action="RepairSubmit" asp-controller="Home">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label asp-for="Topic" class="form-label">เรื่อง</label>
+                    <input type="text" asp-for="Topic" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="AgencyID" class="form-label">สังกัดหน่วยงาน</label>
+                    <select asp-for="AgencyID" class="form-control" required>
+                        <option value="" disabled selected>กรุณาเลือกสังกัดหน่วยงาน</option>
+                        @foreach (var agency in ViewBag.Agencies)
+                        {
+                            <option value="@agency.Value">@agency.Text</option>
+                        }
+                    </select>
+                </div>
             </div>
-            <div class="col-md-6">
-                <label for="department" class="form-label">สังกัดหน่วยงาน</label>
-                <select class="form-control" id="department" name="department" required>
-                    <option value="" disabled selected>กรุณาเลือกสังกัดหน่วยงาน</option>
-                    @foreach (var agency in ViewBag.Agencies as SelectListItem[])
-                    {
-                        <option value="@agency.Value">@agency.Text</option>
-                    }
-                </select>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label asp-for="Email" class="form-label">อีเมล</label>
+                    <input type="email" asp-for="Email" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="TypeOfProblem" class="form-label">ประเภทของปัญหา</label>
+                    <select asp-for="TypeOfProblem" class="form-control" required>
+                        <option value="" disabled selected>กรุณาเลือกประเภทของปัญหา</option>
+                        <option value="hardware">ปัญหาเกี่ยวกับฮาร์ดแวร์/อุปกรณ์</option>
+                        <option value="software">ปัญหาเกี่ยวกับซอฟต์แวร์</option>
+                        <option value="network">ปัญหาด้านเครือข่าย</option>
+                        <option value="other">อื่นๆ</option>
+                    </select>
+                </div>
             </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="email" class="form-label">อีเมล</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="กรุณากรอกอีเมล" required>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label asp-for="Name" class="form-label">ชื่อ</label>
+                    <input type="text" asp-for="Name" class="form-control" required>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="PhoneNumber" class="form-label">เบอร์โทรศัพท์</label>
+                    <input type="text" asp-for="PhoneNumber" class="form-control" required>
+                </div>
             </div>
-            <div class="col-md-6">
-                <label for="problemType" class="form-label">ประเภทของปัญหา</label>
-                <select class="form-control" id="problemType" name="problemType" required>
-                    <option value="" disabled selected>กรุณาเลือกประเภทของปัญหา</option>
-                    <option value="hardware">ปัญหาเกี่ยวกับฮาร์ดแวร์/อุปกรณ์ต่างๆ</option>
-                    <option value="software">ปัญหาเกี่ยวกับซอฟต์แวร์/โปรแกรมต่างๆ</option>
-                    <option value="network">ปัญหาด้านเครือข่าย</option>
-                    <option value="other">อื่นๆ</option>
-                </select>
+            <div class="mb-3">
+                <label asp-for="ProblemDescription" class="form-label">ปัญหาที่พบ</label>
+                <textarea asp-for="ProblemDescription" class="form-control" rows="4" required></textarea>
             </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label for="phoneNumber" class="form-label">เบอร์โทรศัพท์</label>
-                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" placeholder="กรุณากรอกเบอร์โทรศัพท์" required>
+            <input type="hidden" asp-for="StartDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+            <div style="display: flex; justify-content: flex-end;">
+                <button type="submit" class="btn btn-primary ms-auto">ส่งข้อมูล</button>
             </div>
-        </div>
-        <div class="mb-3">
-            <label for="problemDescription" class="form-label">ปัญหาที่พบ</label>
-            <textarea class="form-control" id="problemDescription" name="problemDescription" rows="4" placeholder="กรุณากรอกปัญหาที่พบ" required></textarea>
-        </div>
-        <div style="display: flex; justify-content: flex-end;">
-            <button type="submit" class="btn btn-primary ms-auto">ส่งข้อมูล</button>
-        </div>
-    </form>
+        </form>
+
 </div>
 
 <script>
@@ -65,5 +74,6 @@
         window.location.href = '@Url.Action("Index", "Home")'; // Redirect to the home page
     });
 </script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
