@@ -1,18 +1,20 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Repair_Notification_System.Models;
+using RPS_DB.Models;
 
 namespace Repair_Notification_System.Controllers;
 
 public class StaffController : Controller
 {
     private readonly ILogger<StaffController> _logger;
+        private readonly ApplicationDBContext _context; // Use your correct DbContext
 
-    public StaffController(ILogger<StaffController> logger)
-    {
-        _logger = logger;
-    }
-
+        public StaffController(ILogger<StaffController> logger, ApplicationDBContext context)
+        {
+            _logger = logger;
+            _context = context; // Now your database is ready to use later
+        }
     public IActionResult Index()
     {
         return View();
@@ -40,8 +42,57 @@ public class StaffController : Controller
     
     public IActionResult AgencyManager()
     {
-        return View();
+        // Retrieve all agencies from the database
+        var agencies = _context.Agencies.ToList();
+        
+        // Pass the list to the view
+        return View(agencies);
     }
+
+    public IActionResult UpdateAgencyName(long agencyId, string newName)
+    {
+        var agency = _context.Agencies.Find(agencyId);
+        if (agency != null)
+        {
+            agency.AgencyName = newName;
+            _context.SaveChanges();
+        }
+        return Ok();
+    }
+
+    public IActionResult DisableAgency(long agencyId)
+    {
+        var agency = _context.Agencies.Find(agencyId);
+        if (agency != null)
+        {
+            agency.AgencyState = false;
+            _context.SaveChanges();
+        }
+        return Ok();
+    }
+
+    public IActionResult AddAgency(string agencyName)
+    {
+        var newAgency = new Agency
+        {
+            AgencyName = agencyName,
+            AgencyState = true
+        };
+        _context.Agencies.Add(newAgency);
+        _context.SaveChanges();
+        return Ok(newAgency); // Return the new agency for rendering
+    }
+
+
+
+
+
+
+
+
+
+
+
     
     public IActionResult TicketManager()
     {

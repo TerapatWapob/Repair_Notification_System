@@ -23,251 +23,251 @@ namespace Repair_Notification_System
                 {
                     ID = 1,
                     AgencyName = "คณะเกษตรศาสตร์",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 },
                 new Agency
                 {
                     ID = 2,
                     AgencyName = "คณะครุศาสตร์",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 3,
                     AgencyName = "คณะเทคโนโลยีอุตสาหกรรม",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 4,
                     AgencyName = "คณะบริหารธุรกิจและการจัดการ",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 5,
                     AgencyName = "คณะมนุษยศาสตร์และสังคมศาสตร์",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 6,
                     AgencyName = "คณะวิทยาศาสตร์",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 7,
                     AgencyName = "คณะพยาบาลศาสตร์",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 8,
                     AgencyName = "คณะแพทย์แผนไทยและทางเลือก",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 9,
                     AgencyName = "คณะนิติศาสตร์",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 10,
                     AgencyName = "คณะพยาบาลศาสตร์",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 11,
                     AgencyName = "คณะสาธารณสุขศาสตร์",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 12,
                     AgencyName = "คณะวิทยาการคอมพิวเตอร์",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 13,
                     AgencyName = "บัณทิตวิทยาลัย",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 14,
                     AgencyName = "โรงเรียนสาธิตมหาวิทยาลัยราชภัฏอุบลราชธานี",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 15,
                     AgencyName = "สำนักส่งเสริมวิชาการและงานทะเบียน",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 16,
                     AgencyName = "สำนักศิลปะและวัฒนธรรม",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 17,
                     AgencyName = "สำนักวิทยบริการและเทคโนโลยีสารสนเทศ",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 18,
                     AgencyName = "สถาบันวิจัยและพัฒนา",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 19,
                     AgencyName = "สำนักบริการวิชาการชุมชน",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 20,
                     AgencyName = "สำนักงานตรวจสอบภายใน",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 21,
                     AgencyName = "สำนักงานอธิการบดี",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 22,
                     AgencyName = "กองกลาง (-งานบริหารทั่วไป)",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 23,
                     AgencyName = "กองกลาง (-งานสถาปัตยกรรมและสาธารณูปโภค)",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 24,
                     AgencyName = "กองกลาง (-งานสิ่งแวดล้อมและภูมิทัศน์)",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 25,
                     AgencyName = "กองกลาง (-งานอาคารสถานที่)",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 26,
                     AgencyName = "กองกลาง (-งานยานพาหนะ)",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 27,
                     AgencyName = "กองกลาง (-งานรักษาความปลอดภัยและจราจร)",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 28,
                     AgencyName = "กองนโยบายและแผน",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 29,
                     AgencyName = "กองบริหารงานบุคคล",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 30,
                     AgencyName = "กองพัฒนานักศึกษา",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 31,
                     AgencyName = "กองคลัง",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 32,
                     AgencyName = "กองสวัสดิการ",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 33,
                     AgencyName = "ศูนย์คอมพิวเตอร์",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 34,
                     AgencyName = "ศูนย์พัฒนากีฬาและสุขภาพ",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 35,
                     AgencyName = "สำนักงานส่งเสริมมหาวิทยาลัย",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
                 ,
                 new Agency
                 {
                     ID = 36,
                     AgencyName = "กองเลขานุการ สำนักงานอธิการบดี",
-                    Status = AgencyStatus.Enabled
+                    AgencyState = true
                 }
             );
 

@@ -6,27 +6,30 @@ using System.Numerics;
 
 namespace RPS_DB.Models
 {
-    public enum AgencyStatus
-    {
+public enum AgencyStatus
+{
     Enabled,
     Disabled
-    }
-    public class Agency
+}
+
+public class Agency
+{
+    public Agency()
     {
-        public Agency()
-        {
-            Tickets = new List<Ticket>();
-        }
-
-        [Key]
-        public long ID { get; set; }
-
-        [MaxLength(100)]
-        public required string AgencyName { get; set; }
-        public AgencyStatus Status {get; set;} = AgencyStatus.Enabled;
-
-        public virtual ICollection<Ticket> Tickets { get; set; }
+        Tickets = new List<Ticket>();
     }
+
+    [Key]
+    public long ID { get; set; }
+
+    [MaxLength(100)]
+    public required string AgencyName { get; set; }
+    // AgencyState to indicate enable/disable (true = enabled, false = disabled)
+    public bool AgencyState { get; set; } = true;
+
+    public virtual ICollection<Ticket> Tickets { get; set; }
+}
+
 
     public class Ticket
     {
