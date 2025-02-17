@@ -1,91 +1,198 @@
 ﻿@{
-    Layout = "_StaffLayout"; // Specify a custom layout
+    Layout = "_StaffLayout";
 }
 
 @model List<RPS_DB.Models.Agency>
 
 <style>
     .header {
-        background-color: #007BFF; /* Blue background */
+        background-color: #007BFF;
         color: white;
         text-align: center;
         padding: 15px;
         border-radius: 10px 10px 0 0;
-        text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; /* Black stroke */
-        font-size: 1.5rem; /* Larger font size for header */
-        width: 100%; /* Ensure header width matches subheader and content */
+        text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+        font-size: 1.5rem;
+        width: 100%;
     }
     .subheader {
-        background-color: #f0f8ff; /* Light blue background */
+        background-color: #98caff;
         padding: 10px;
         font-weight: bold;
-        font-size: 1rem; /* Smaller font size than header */
+        font-size: 1rem;
     }
     .content {
-        background-color: white; /* White background for future content */
+        background-color: white;
         padding: 20px 10px;
         border-radius: 0 0 10px 10px;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     }
-    /* Adjusted flexbox layout to match columns */
-    .content .agency-row {
+    .agency-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
         margin-bottom: 10px;
     }
-    .content .agency-item {
+    .agency-item {
         text-align: center;
         padding: 10px;
     }
-    /* Specific width for each column to match header */
     .agency-id {
-        width: 10%; /* Set width to match "หมายเลข" column */
+        width: 10%;
     }
     .agency-name {
-        width: 60%; /* Set width to match "ชื่อหน่วยงาน" column */
+        width: 60%;
     }
     .agency-action {
-        width: 15%; /* Set width for action buttons */
+        width: 15%;
     }
 </style>
 
 <br><br>
 <div class="container mt-5">
-    <!-- Header -->
     <div class="header">
         <h2>ระบบจัดการรายชื่อหน่วยงาน</h2>
         <div class="subheader row text-center">
-            <div class="col-1 d-flex justify-content-center align-items-center">หมายเลข</div>
+            <div class="col-1">หมายเลข</div>
             <div class="col">ชื่อหน่วยงาน</div>
-            <div class="col-1 d-flex justify-content-center align-items-center"></div> <!-- Smaller column for action buttons -->
-            <div class="col-1 d-flex justify-content-center align-items-center"></div> <!-- Smaller column for action buttons -->
-            <div class="col-1 d-flex justify-content-center align-items-center"></div> 
-            
+            <div class="col-1"></div>
+            <div class="col-1"></div>
         </div>
     </div>
 
-    <!-- Content -->
-    <div class="content">
-        <!-- Display the list of agencies -->
-        @foreach (var agency in Model)
+    <div class="content" id="agency-list">
+        @foreach (var agency in Model.Where(a => a.AgencyState))
         {
-            <div class="agency-row">
-                <div class="agency-item agency-id">@agency.ID</div> <!-- Display Agency ID -->
-                <div class="agency-item agency-name">@agency.AgencyName</div> <!-- Display Agency Name -->
+            <div class="agency-row" data-id="@agency.ID">
+                <div class="agency-item agency-id">@agency.ID</div>
+                <div class="agency-item agency-name" id="agency-name-@agency.ID">@agency.AgencyName</div>
                 <div class="agency-item agency-action">
-                    <button class="btn btn-info">แก้ไข</button> <!-- Placeholder for Delete button -->
+                    <button class="btn btn-info" onclick="editAgencyName(@agency.ID)">แก้ไข</button>
                 </div>
                 <div class="agency-item agency-action">
-                    <button class="btn btn-danger">ลบ</button> <!-- Placeholder for Edit button -->
+                    <button class="btn btn-danger" onclick="confirmDeleteAgency(@agency.ID)">ลบ</button>
                 </div>
             </div>
         }
-    </div>
-
-    <!-- Add Agency Section (Placeholder for Add functionality) -->
-    <div class="mt-4">
-        <button class="btn btn-primary">Add Agency</button> <!-- Placeholder for Add button -->
+        <div class="d-flex justify-content-end">
+            <button class="btn btn-primary" onclick="addAgencyRow()">เพิ่มหน่วยงาน</button>
+        </div>
     </div>
 </div>
 
+<script>
+    let editingElement = null;
+    let currentName = "";
+
+    function editAgencyName(id) {
+        let agencyElement = document.getElementById(`agency-name-${id}`);
+        if (editingElement && editingElement !== agencyElement) {
+            cancelEdit(); // Cancel previous edit if another edit starts
+        }
+
+        if (agencyElement) {
+            currentName = agencyElement.innerText;
+            let input = document.createElement("input");
+            input.type = "text";
+            input.value = currentName;
+            input.classList.add("form-control");
+
+            input.onblur = cancelEdit; // Cancel if focus moves out
+
+            input.onkeydown = function(event) {
+                if (event.key === "Enter") {
+                    saveAgencyName(id, input.value);
+                }
+            };
+
+            agencyElement.innerText = "";
+            agencyElement.appendChild(input);
+            input.focus();
+            editingElement = agencyElement;
+        }
+    }
+
+    function cancelEdit() {
+        if (editingElement) {
+            editingElement.innerText = currentName;
+            editingElement = null;
+        }
+    }
+
+    function saveAgencyName(id, newName) {
+        if (newName.trim() !== currentName) {
+            fetch(`/Staff/EditAgency`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ID: id, AgencyName: newName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById(`agency-name-${id}`).innerText = newName;
+                    editingElement = null;
+                } else {
+                    alert("เกิดข้อผิดพลาดในการแก้ไขหน่วยงาน");
+                    cancelEdit(); // Revert to old name
+                }
+            });
+        } else {
+            cancelEdit(); // No change in name, just cancel edit
+        }
+    }
+
+    function confirmDeleteAgency(id) {
+        if (confirm("คุณแน่ใจหรือที่จะลบหน่วยงานนี้? โปรดทราบว่าการกระทำนี้ไม่สามารถย้อนกลับได้")) {
+            fetch(`/Staff/DeleteAgency`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ID: id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.querySelector(`.agency-row[data-id='${id}']`).remove();
+                } else {
+                    alert("เกิดข้อผิดพลาดในการลบหน่วยงาน");
+                }
+            });
+        }
+    }
+
+    function addAgencyRow() {
+        let container = document.getElementById("agency-list");
+        let newRow = document.createElement("div");
+        newRow.classList.add("agency-row");
+
+        newRow.innerHTML = `
+            <div class="agency-item agency-id">New</div>
+            <div class="agency-item agency-name">
+                <input type="text" class="form-control" onkeydown="saveNewAgency(event, this)">
+            </div>
+            <div class="agency-item agency-action"></div>
+            <div class="agency-item agency-action"></div>
+        `;
+
+        container.insertBefore(newRow, container.lastElementChild);
+        newRow.querySelector("input").focus();
+    }
+
+    function saveNewAgency(event, input) {
+        if (event.key === "Enter" && input.value.trim() !== "") {
+            let newName = input.value.trim();
+            fetch(`/Staff/AddAgency`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ AgencyName: newName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();  // Reload to show the new agency
+                } else {
+                    alert("เกิดข้อผิดพลาดในการเพิ่มหน่วยงาน");
+                }
+            });
+        }
+    }
+</script>
