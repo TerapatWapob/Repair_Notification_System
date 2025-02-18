@@ -43,15 +43,21 @@ namespace Repair_Notification_System.Controllers
             return View(tickets);
         }
 
-        public IActionResult Repair()
-        {
-            var agencies = _context.Agencies
-                .Select(a => new SelectListItem { Value = a.ID.ToString(), Text = a.AgencyName })
-                .ToList();
+    public IActionResult Repair()
+    {
+        var agencies = _context.Agencies
+            .Where(a => a.AgencyState) // Filter only active agencies
+            .Select(a => new SelectListItem 
+            { 
+                Value = a.ID.ToString(), 
+                Text = a.AgencyName 
+            })
+            .ToList();
 
-            ViewBag.Agencies = agencies;
-            return View();
-        }
+        ViewBag.Agencies = agencies;
+        return View();
+    }
+
 
 
     [HttpPost]

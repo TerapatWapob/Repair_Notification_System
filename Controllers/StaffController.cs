@@ -51,81 +51,79 @@ namespace Repair_Notification_System.Controllers
             // Pass the list to the view
             return View(agencies);
         }
-    [HttpPost]
-    public IActionResult EditAgency([FromBody] Agency agency)
-    {
-        if (agency == null)
-        {
-            return BadRequest("Invalid data.");
-        }
 
-        try
+        [HttpPost]
+        public IActionResult EditAgency([FromBody] Agency agency)
         {
-            var existingAgency = _context.Agencies.Find(agency.ID);
-            if (existingAgency == null)
-            {
-                return NotFound("Agency not found.");
-            }
-
-            existingAgency.AgencyName = agency.AgencyName;
-            _context.SaveChanges();
-
-            return Json(new { success = true });
-        }
-        catch (Exception ex)
-        {
-            // Log the exception (you can replace this with a proper logger)
-            Console.Error.WriteLine(ex.Message);
-            return StatusCode(500, "Internal server error.");
-        }
-    }
-
-    [HttpPost]
-    public IActionResult AddAgency([FromBody] Agency agency)
-    {
-        if (agency == null)
-        {
-            return BadRequest("Invalid data.");
-        }
-
-        try
-        {
-            _context.Agencies.Add(agency);
-            _context.SaveChanges();
-
-            return Json(new { success = true });
-        }
-        catch (Exception ex)
-        {
-            // Log the exception (you can replace this with a proper logger)
-            Console.Error.WriteLine(ex.Message);
-            return StatusCode(500, "Internal server error.");
-        }
-    }
-
-    [HttpPost]
-    public IActionResult DeleteAgency([FromBody] int agencyId)
-    {
-        try
-        {
-            var agency = _context.Agencies.Find(agencyId);
             if (agency == null)
             {
-                return NotFound("Agency not found.");
+                return BadRequest("Invalid data.");
             }
 
-            _context.Agencies.Remove(agency);
-            _context.SaveChanges();
+            try
+            {
+                var existingAgency = _context.Agencies.Find(agency.ID);
+                if (existingAgency == null)
+                {
+                    return NotFound("Agency not found.");
+                }
 
+                existingAgency.AgencyName = agency.AgencyName;
+                _context.SaveChanges();
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can replace this with a proper logger)
+                Console.Error.WriteLine(ex.Message);
+                return StatusCode(500, "Internal server error.");
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AddAgency([FromBody] Agency agency)
+        {
+            if (agency == null)
+            {
+                return BadRequest("Invalid data.");
+            }
+
+            try
+            {
+                _context.Agencies.Add(agency);
+                _context.SaveChanges();
+
+                return Json(new { success = true });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (you can replace this with a proper logger)
+                Console.Error.WriteLine(ex.Message);
+                return StatusCode(500, "Internal server error.");
+            }
+        }
+
+    [HttpPost]
+    public IActionResult DeleteAgency([FromBody] DeleteAgencyRequest request)
+    {
+        var agency = _context.Agencies.FirstOrDefault(a => a.ID == request.Id);
+        if (agency != null)
+        {
+            agency.AgencyState = false;
+            _context.SaveChanges();
             return Json(new { success = true });
         }
-        catch (Exception ex)
-        {
-            // Log the exception (you can replace this with a proper logger)
-            Console.Error.WriteLine(ex.Message);
-            return StatusCode(500, "Internal server error.");
-        }
+        return Json(new { success = false, message = "Agency not found." });
     }
+
+
+
+
+
+
+
+
 
 
 

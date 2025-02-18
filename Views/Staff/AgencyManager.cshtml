@@ -61,10 +61,10 @@
     </div>
 
     <div class="content" id="agency-list">
-        @foreach (var agency in Model.Where(a => a.AgencyState))
+        @foreach (var (agency, index) in Model.Where(a => a.AgencyState).Select((agency, index) => (agency, index)))
         {
             <div class="agency-row" data-id="@agency.ID">
-                <div class="agency-item agency-id">@agency.ID</div>
+                <div class="agency-item agency-id">@(@index + 1)</div>  <!-- This line displays the sequential number -->
                 <div class="agency-item agency-name" id="agency-name-@agency.ID">@agency.AgencyName</div>
                 <div class="agency-item agency-action">
                     <button class="btn btn-info" onclick="editAgencyName(@agency.ID)">แก้ไข</button>
@@ -80,7 +80,7 @@
     </div>
 </div>
 
-<script>
+    <script>
     let editingElement = null;
     let currentName = "";
 
@@ -131,6 +131,7 @@
                 if (data.success) {
                     document.getElementById(`agency-name-${id}`).innerText = newName;
                     editingElement = null;
+                    location.reload();
                 } else {
                     alert("เกิดข้อผิดพลาดในการแก้ไขหน่วยงาน");
                     cancelEdit(); // Revert to old name
@@ -141,23 +142,44 @@
         }
     }
 
-    function confirmDeleteAgency(id) {
+    function confirmDeleteAgency(ID) {
+        console.log("Deleting agency with ID:", ID); // Debugging: log the agency ID
+
         if (confirm("คุณแน่ใจหรือที่จะลบหน่วยงานนี้? โปรดทราบว่าการกระทำนี้ไม่สามารถย้อนกลับได้")) {
-            fetch(`/Staff/DeleteAgency`, {
+            fetch("/Staff/DeleteAgency", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ ID: id })
+                body: JSON.stringify({ Id: ID })  // Ensure 'Id' matches the parameter in your controller
             })
             .then(response => response.json())
             .then(data => {
+                console.log("Response data:", data);  // Debugging: check if we get the success response
                 if (data.success) {
-                    document.querySelector(`.agency-row[data-id='${id}']`).remove();
+                    location.reload();  // Reload the page to update the list
                 } else {
-                    alert("เกิดข้อผิดพลาดในการลบหน่วยงาน");
+                    alert("เกิดข้อผิดพลาดในการลบหน่วยงาน: โปรดติดต่อผู้ดูแลระบบ" + data.message);
                 }
+            })
+            .catch(error => {
+                console.error("Error deleting agency: โปรดติดต่อผู้ดูแลระบบ", error);  // Log any error that happens in fetch
+                alert("เกิดข้อผิดพลาดในการลบหน่วยงานโปรดติดต่อผู้ดูแลระบบ");
             });
         }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     function addAgencyRow() {
         let container = document.getElementById("agency-list");
