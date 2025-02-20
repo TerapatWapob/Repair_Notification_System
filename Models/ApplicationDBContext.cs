@@ -303,8 +303,8 @@ namespace Repair_Notification_System
                     Name = "John Doe",
                     Email = "johndoe@example.com",
                     PhoneNumber = "1234567890",
-                    StartDate = new DateTime(2025, 1, 1),
-                    EndDate = new DateTime(2025, 1, 5),
+                    StartDate = new DateTime(2025, 1, 15),
+                    EndDate = null,
                     Topic = "Login Issue",
                     TypeOfProblem = "Authentication",
                     ProblemDescription = "Unable to log into the system.",
@@ -317,8 +317,8 @@ namespace Repair_Notification_System
                     Name = "Jane Smith",
                     Email = "janesmith@example.com",
                     PhoneNumber = "0987654321",
-                    StartDate = new DateTime(2025, 1, 8),
-                    EndDate = new DateTime(2025, 1, 12),
+                    StartDate = new DateTime(2025, 2, 10),
+                    EndDate = null,
                     Topic = "System Crash",
                     TypeOfProblem = "Technical",
                     ProblemDescription = "System crashes when opening the dashboard.",
@@ -336,7 +336,21 @@ namespace Repair_Notification_System
                     Topic = "System Crash",
                     TypeOfProblem = "Technical",
                     ProblemDescription = "System crashes when opening the dashboard.",
-                    State = TicketState.เสร็จสิ้น,
+                    State = TicketState.ดำเนินการเสร็จสิ้น,
+                    AgencyID = 2
+                },
+                new Ticket
+                {
+                    ID = 4,
+                    Name = "Luthor Sama",
+                    Email = "Luthor@example.com",
+                    PhoneNumber = "0892835021",
+                    StartDate = new DateTime(2025, 2, 15),
+                    EndDate = new DateTime(2025, 2, 18),
+                    Topic = "System Crash",
+                    TypeOfProblem = "Technical",
+                    ProblemDescription = "System crashes when opening the dashboard.",
+                    State = TicketState.ดำเนินการเสร็จสิ้น,
                     AgencyID = 2
                 }
             );

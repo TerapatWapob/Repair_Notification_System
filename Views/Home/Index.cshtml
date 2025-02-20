@@ -48,29 +48,8 @@
     <div class="header-bg text-center mb-4">
         @foreach (var ticket in Model.OrderByDescending(t => t.StartDate))
         {
-            // Show tickets with EndDate within 14 days
-            if (ticket.EndDate != null)
-            {
-                var timeSpan = ticket.EndDate - ticket.StartDate;
-                if (timeSpan.HasValue && timeSpan.Value.Days <= 14)
-                {
-                    <div class="row">
-                        <div class="col-3 text-start responsive-text">เรื่อง</div>
-                        <div class="col-9 text-end responsive-text">@ticket.Topic (@ticket.Name)</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-3 text-start responsive-text">สถานะ</div>
-                        <div class="col-9 text-end responsive-text">@ticket.State</div>
-                    </div>
-                    <div class="row">
-                        <div class="col-3 text-start responsive-text">วันที่แจ้ง</div>
-                        <div class="col-9 text-end responsive-text">@ticket.StartDate?.ToString("dd/MM/yyyy")</div>
-                    </div>
-                    <hr/>
-                }
-            }
-            // Show tickets without EndDate
-            else
+            // Always show tickets without an EndDate
+            if (ticket.EndDate == null)
             {
                 <div class="row">
                     <div class="col-3 text-start responsive-text">เรื่อง</div>
@@ -84,8 +63,32 @@
                     <div class="col-3 text-start responsive-text">วันที่แจ้ง</div>
                     <div class="col-9 text-end responsive-text">@ticket.StartDate?.ToString("dd/MM/yyyy")</div>
                 </div>
-                <hr/>
+                <hr />
+            }
+            else
+            {
+                var endDate = ticket.EndDate.Value;
+                var today = DateTime.Today;
+                
+                // Show tickets only if they are within 14 days after their EndDate
+                if (today <= endDate.AddDays(14))
+                {
+                    <div class="row">
+                        <div class="col-3 text-start responsive-text">เรื่อง</div>
+                        <div class="col-9 text-end responsive-text">@ticket.Topic (@ticket.Name)</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3 text-start responsive-text">สถานะ</div>
+                        <div class="col-9 text-end responsive-text">@ticket.State</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-3 text-start responsive-text">วันที่แจ้ง</div>
+                        <div class="col-9 text-end responsive-text">@ticket.StartDate?.ToString("dd/MM/yyyy")</div>
+                    </div>
+                    <hr />
+                }
             }
         }
     </div>
 </div>
+
