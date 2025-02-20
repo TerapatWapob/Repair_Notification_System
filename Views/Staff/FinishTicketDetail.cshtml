@@ -1,6 +1,9 @@
-﻿@{
+﻿@model TicketDetailViewModel
+
+@{
     Layout = "_StaffLayout"; // Specify a custom layout
 }
+
 <style>
   .finishticketadd-header {
     background-color: #007BFF; /* Blue background */
@@ -31,54 +34,60 @@
     color: white;
   }
 </style>
-    
-  <div class="form-container">
+
+<div class="form-container">
     <!-- Header -->
     <div class="finishticketadd-header">
-      <h3>รายการที่ดำเนินการเรียบร้อยแล้ว</h3>
+        <h3>รายการที่ดำเนินการเรียบร้อยแล้ว</h3>
     </div>
     <!-- Form -->
     <div class="finishticketadd-form">
-      <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="subject" class="form-label">เรื่อง</label>
-                    <input type="text" class="form-control" id="subject">
-                </div>
-                <div class="col-md-6">
-                    <label for="department" class="form-label">สังกัดหน่วยงาน</label>
-                    <input type="text" class="form-control" id="department">
-                </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">เรื่อง</label>
+                <input type="text" class="form-control" value="@Model.Topic" disabled>
             </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="email" class="form-label">อีเมล</label>
-                    <input type="email" class="form-control" id="email">
-                </div>
-                <div class="col-md-6">
-                    <label for="problemType" class="form-label">ประเภทของปัญหา</label>
-                    <div class="custom-select">
-                        <select class="form-control" id="problemType"></select>
-                    </div>
-                </div>
+            <div class="col-md-6">
+                <label class="form-label">สังกัดหน่วยงาน</label>
+                <input type="text" class="form-control" value="@Model.AgencyName" disabled>
             </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <label for="phoneNumber" class="form-label">เบอร์โทรศัพท์ที่สามารถติดต่อได้</label>
-                    <input type="text" class="form-control" id="phoneNumber"/>
-                </div>
-                <div class="col-md-6">
-                    <label for="reportDate" class="form-label">วันที่แจ้ง</label>
-                    <input type="text" class="form-control disabled-field" id="reportDate" disabled>
-                </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">อีเมล</label>
+                <input type="email" class="form-control" value="@Model.Email" disabled>
             </div>
-            <div class="mb-3">
-                <label for="problemDescription" class="form-label">ปัญหาที่พบ</label>
-                <textarea class="form-control" id="problemDescription" rows="4"></textarea>
+            <div class="col-md-6">
+                <label class="form-label">ประเภทของปัญหา</label>
+                <input type="text" class="form-control" value="@Model.TypeOfProblem" disabled>
             </div>
-            <div style="display: flex; justify-content: flex-end;">
-            <button type="submit" class="btn btn-primary ms-auto">ย้อนกลับ</button>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">ชื่อผู้แจ้ง</label>
+                <input type="text" class="form-control" value="@Model.Name" disabled>
             </div>
+            <div class="col-md-6">
+                <label class="form-label">เบอร์โทรศัพท์</label>
+                <input type="text" class="form-control" value="@Model.PhoneNumber" disabled>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label">วันที่แจ้ง</label>
+                <input type="text" class="form-control" value="@Model.StartDate.ToString("dd-MM-yyyy")" disabled>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">วันที่ดำเนินการเสร็จสิ้น</label>
+                <input type="text" class="form-control" value="@Model.EndDate.ToString("dd-MM-yyyy")" disabled>
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">ปัญหาที่พบ</label>
+            <textarea class="form-control" rows="4" disabled>@Model.ProblemDescription</textarea>
+        </div>
+        <div style="display: flex; justify-content: flex-end;">
+            <a href="@Url.Action("FinishTicket", "Staff")" class="btn btn-primary">ย้อนกลับ</a>
+        </div>
     </div>
-  </div>
-
-    
+</div>

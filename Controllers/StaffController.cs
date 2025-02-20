@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Repair_Notification_System.Models;
 using RPS_DB.Models;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repair_Notification_System.Controllers
 {
@@ -117,38 +118,6 @@ namespace Repair_Notification_System.Controllers
         return Json(new { success = false, message = "Agency not found." });
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         // Ticket Manager
         public IActionResult TicketManager()
         {
@@ -161,17 +130,48 @@ namespace Repair_Notification_System.Controllers
             return View();
         }
 
-        // Finish Ticket
-        public IActionResult FinishTicket()
+    public IActionResult FinishTicket()
+    {
+        var finishedTickets = _context.Tickets.Where(t => t.State == TicketState.ดำเนินการเสร็จสิ้น).ToList();
+        return View(finishedTickets);
+    }
+
+    
+    public IActionResult FinishTicketDetail(long id)
+    {
+        var ticket = _context.Tickets
+            .Include(t => t.Agency)  // Ensure related data is loaded
+            .FirstOrDefault(t => t.ID == id);
+
+        if (ticket == null)
         {
-            return View();
+            return NotFound();
         }
 
-        // Finish Ticket Detail
-        public IActionResult FinishTicketDetail()
+        // Ensure that StartDate and EndDate are not null
+        if (!ticket.StartDate.HasValue || !ticket.EndDate.HasValue)
         {
-            return View();
+            ticket.StartDate = ticket.StartDate ?? DateTime.Now;
+            ticket.EndDate = ticket.EndDate ?? DateTime.Now;
         }
+
+        var model = new TicketDetailViewModel
+        {
+            Topic = ticket.Topic,
+            AgencyName = ticket.Agency?.AgencyName ?? "Unknown",
+            Email = ticket.Email,
+            TypeOfProblem = ticket.TypeOfProblem,
+            Name = ticket.Name,
+            PhoneNumber = ticket.PhoneNumber,
+            StartDate = ticket.StartDate.Value, // Non-nullable
+            EndDate = ticket.EndDate.Value,     // Non-nullable
+            ProblemDescription = ticket.ProblemDescription
+        };
+
+        return View(model);
+    }
+
+
 
         // Report
         public IActionResult Report()
