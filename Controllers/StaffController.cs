@@ -25,7 +25,7 @@ namespace Repair_Notification_System.Controllers
 
         public IActionResult AdminAccountManager()
         {
-            var AdminAccountManager = _context.Users.Where(t=>t.UserRole == UserRole.Admin).ToList();
+            var AdminAccountManager = _context.Users.Where(user=>user.UserRole == UserRole.Admin).ToList();
             return View(AdminAccountManager);
         }
 

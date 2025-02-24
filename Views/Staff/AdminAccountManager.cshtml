@@ -16,48 +16,62 @@
     }
     .subheader {
       background-color: #f0f8ff; /* Light blue background */
-      padding: 10px;
+      padding: 10px 10px;
       font-weight: bold;
       font-size: 1rem; /* Smaller font size than header */
     }
     .content {
-      background-color: white; /* White background for future content */
-      padding: 20px 10px;
-      border-radius: 0 0 10px 10px;
+      background-color: white;
+      padding: 10px 10px;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 100%; /* Ensures content width matches header */
     }
+    .content .row {
+      padding: 5px 0; /* Increase top and bottom padding */
+      align-items: center; /* Keep content vertically centered */
+}
     .content .col {
-      border: 1px solid #ddd; /* Add a light border to columns for clarity */
-      padding: 10px;
+      padding: 5px;
       text-align: center;
     }
   </style>
 
     <br>
     <br>
-    <div class="container mt-5">
-    <!-- Header -->
-    <div class="header">
+@{
+    int index = 1;  
+    var today = DateTime.Today;
+}
+
+<div class="container row mt-5">
+    <div class="header row">
         <h2>ระบบจัดการบัญชี Admin</h2>
+    </div>
     <div class="subheader row text-center">
         <div class="col">บัญชีที่</div>
-        <div class="col">ชื่อบัญชี</div>
+        <div class="col">เจ้าของบัญชี</div>
         <div class="col">ชื่อผู้ใช้งาน</div>
         <div class="col">เบอร์โทรศัพท์</div>
         <div class="col">ตำแหน่ง</div>
-        <div class="col-1 d-flex justify-content-center align-items-center">-</div> <!-- Smaller column -->
+        <div class="col-2 d-flex justify-content-center align-items-center">-</div> <!-- Smaller column -->
         <div class="col-1 d-flex justify-content-center align-items-center">-</div> <!-- Smaller column -->
     </div>
-    <!-- Content -->
+
     <div class="content row">
-        <div class="col">-</div>
-        <div class="col">-</div>
-        <div class="col">-</div>
-        <div class="col">-</div>
-        <div class="col">-</div>
-        <div class="col-1 d-flex justify-content-center align-items-center">-</div> <!-- Smaller column -->
-        <div class="col-1 d-flex justify-content-center align-items-center">-</div> <!-- Smaller column -->
+      @foreach (var User in Model)
+      {
+        if (User.UserRole != null)
+        {
+          <div class="col">@index</div>
+          <div class="col">@User.Name</div>
+          <div class="col">@User.Username</div>
+          <div class="col">@User.PhoneNumber</div>
+          <div class="col">@User.Position</div>
+          <div class="col-2 d-flex justify-content-center align-items-center"><a href="" class="btn btn-info">รายละเอียด</a></div>
+          <div class="col-1 d-flex justify-content-center align-items-center"><a href="" class="btn btn-danger">ลบบัญชี</a></div>
+        index++;
+        }
+      }
     </div>
-    </div>
-    </div>
+</div>
 
