@@ -151,7 +151,7 @@
     function confirmDeleteAgency(ID) {
         console.log("Deleting agency with ID:", ID); // Debugging: log the agency ID
 
-        if (confirm("คุณแน่ใจหรือที่จะลบหน่วยงานนี้? โปรดทราบว่าการกระทำนี้ไม่สามารถย้อนกลับได้")) {
+        if (confirm("คุณแน่ใจหรือที่จะลบหน่วยงานนี้?\nโปรดทราบว่าการกระทำนี้ไม่สามารถย้อนกลับได้")) {
             fetch("/Staff/DeleteAgency", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
