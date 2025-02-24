@@ -1,38 +1,40 @@
 ﻿@{
-    Layout = "_StaffLayout"; // Specify a custom layout
+    Layout = "_StaffLayout";
 }
+@model List<RPS_DB.Models.Ticket>
+
   <style>
     .header {
-      background-color: #007BFF; /* Blue background */
+      background-color: #007BFF;
       color: white;
       text-align: center;
       padding: 15px;
       border-radius: 10px 10px 0 0;
-      text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; /* Black stroke */
-      font-size: 1.5rem; /* Larger font size for header */
-      width: 100%; /* Ensure header width matches subheader and content */
+      text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+      font-size: 1.5rem;
+      width: 100%;
     }
     .subheader {
-      background-color: #f0f8ff; /* Light blue background */
-      padding: 10px 15px; /* Adjust padding for consistency */
+      background-color: #f0f8ff;
+      padding: 10px 15px;
       font-weight: bold;
-      font-size: 1rem; /* Smaller font size than header */
-      width: 100%; /* Make sure it's the same width as header */
-      box-sizing: border-box; /* Ensures padding doesn't add extra width */
+      font-size: 1rem;
+      width: 100%;
+      box-sizing: border-box;
       display: flex;
-      justify-content: space-between; /* Spread columns evenly */
-      align-items: center; /* Vertically center text */
+      justify-content: space-between;
+      align-items: center;
     }
     .content {
-    background-color: white;
-    padding: 10px 30px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 100%; /* Ensures content width matches header */
+      background-color: white;
+      padding: 10px 30px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      width: 100%;
     }
     .content .row {
-    padding: 5px 0; /* Increase top and bottom padding */
-    align-items: center; /* Keep content vertically centered */
-}
+      padding: 5px 0;
+      align-items: center;
+    }
     .content .col {
       padding: 10px;
       text-align: center;
@@ -63,29 +65,43 @@
   </div>
 
   <div class="content row w-100 m-0">
-    @foreach (var ticket in Model)
+@foreach (var ticket in Model)
     {
-      if (ticket.StartDate != null && (today - ticket.StartDate).Days <= 365)
-      {
-        <div class="row text-center">
-        <div class="col-1 d-flex justify-content-center align-items-center">@index</div>
-        <div class="col d-flex justify-content-center align-items-center">@ticket.Topic</div>
-        <div class="col-3 d-flex justify-content-center align-items-center">@ticket.Name</div>
-        <div class="col-3 d-flex justify-content-center align-items-center">@ticket.StartDate.ToString("dd-MM-yyyy")</div>
-        <div class="col-1 d-flex justify-content-center align-items-center">
-          <a href="" class="btn btn-info">แก้ไข</a>
-        </div>
-        <div class="col-1 d-flex justify-content-center align-items-center">
-          <a href="" class="btn btn-danger">ลบ</a>
-        </div>
-        <div class="col-1 d-flex justify-content-center align-items-center">
-          <a href="" class="btn btn-success">เสร็จสิ้น</a>
-        </div>
-        </div>
-        index++;
-      }
+        if (ticket.StartDate != null)
+        {
+            <div class="row text-center">
+                <div class="col-1 d-flex justify-content-center align-items-center">@index</div>
+                <div class="col d-flex justify-content-center align-items-center">@ticket.Topic</div>
+                <div class="col-3 d-flex justify-content-center align-items-center">@ticket.Name</div>
+                <div class="col-3 d-flex justify-content-center align-items-center">@ticket.StartDate</div>
+                <div class="col-1 d-flex justify-content-center align-items-center">
+                <a href="@Url.Action("EditTicket", "Staff", new { id = ticket.ID })" class="btn btn-info">แก้ไข</a>
+                </div>
+                <div class="col-1 d-flex justify-content-center align-items-center">
+                    <a href="@Url.Action("DeleteTicket", "Staff", new { id = ticket.ID })" class="btn btn-danger" 
+                      onclick="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?');">ลบ</a>
+                </div>
+                <div class="col-1 d-flex justify-content-center align-items-center">
+                    <form asp-action="MarkAsCompleted" asp-controller="Staff" method="post" onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการเปลี่ยนสถานะเป็น ดำเนินการเสร็จสิ้น?');">
+                    <input type="hidden" name="id" value="@ticket.ID" />
+                    <button type="submit" class="btn btn-success">เสร็จสิ้น</button>
+                    </form>
+
+                </div>
+
+
+            </div>
+            index++;
+        }
     }
-    
+
   </div>
 </div>
 
+<script>
+  function confirmMarkAsCompleted(ticketId) {
+      if (confirm("คุณแน่ใจหรือไม่ว่าต้องการเปลี่ยนสถานะเป็น 'ดำเนินการเสร็จสิ้น'?")) {
+          window.location.href = '/Staff/MarkAsCompleted/' + ticketId;
+      }
+  }
+</script>

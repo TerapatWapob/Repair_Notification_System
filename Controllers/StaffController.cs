@@ -106,116 +106,177 @@ namespace Repair_Notification_System.Controllers
             }
         }
 
-    [HttpPost]
-    public IActionResult DeleteAgency([FromBody] DeleteAgencyRequest request)
-    {
-        var agency = _context.Agencies.FirstOrDefault(a => a.ID == request.Id);
-        if (agency != null)
+        [HttpPost]
+        public IActionResult DeleteAgency([FromBody] DeleteAgencyRequest request)
         {
-            agency.AgencyState = false;
-            _context.SaveChanges();
-            return Json(new { success = true });
-        }
-        return Json(new { success = false, message = "Agency not found." });
-    }
-
-        // Ticket Manager
-        public IActionResult TicketManager()
-        {
-            var TicketManager = _context.Tickets.Where(t=> t.State != TicketState.ดำเนินการเสร็จสิ้น).ToList();
-            return View(TicketManager);
+            var agency = _context.Agencies.FirstOrDefault(a => a.ID == request.Id);
+            if (agency != null)
+            {
+                agency.AgencyState = false;
+                _context.SaveChanges();
+                return Json(new { success = true });
+            }
+            return Json(new { success = false, message = "Agency not found." });
         }
 
-        // Edit Ticket Manager
-        public IActionResult TicketManagerEdit()
+                public IActionResult TicketManager()
+                {
+                    var unfinishedTickets = _context.Tickets
+                        .Where(t => t.State != TicketState.ดำเนินการเสร็จสิ้น)
+                        .ToList();
+
+                    return View(unfinishedTickets);
+                }
+
+                public IActionResult EditTicket(int id)
+                {
+                    var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
+                    if (ticket == null) return NotFound();
+                    return View("TicketManagerDetail", ticket);
+                }
+
+                public IActionResult DeleteTicket(int id)
+                {
+                    var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
+                    if (ticket != null)
+                    {
+                        _context.Tickets.Remove(ticket);
+                        _context.SaveChanges();
+                    }
+                    return RedirectToAction("TicketManager");
+                }
+                [HttpPost]
+                public IActionResult MarkAsCompleted(int id)
+                {
+                    var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
+                    if (ticket != null)
+                    {
+                        ticket.State = TicketState.ดำเนินการเสร็จสิ้น;
+                        ticket.EndDate = DateTime.Today;
+                        _context.SaveChanges();
+                    }
+                    return RedirectToAction("TicketManager");
+                }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        public IActionResult FinishTicket()
         {
-            return View();
+            var finishedTickets = _context.Tickets.Where(t => t.State == TicketState.ดำเนินการเสร็จสิ้น).ToList();
+            return View(finishedTickets);
         }
 
-    public IActionResult FinishTicket()
-    {
-        var finishedTickets = _context.Tickets.Where(t => t.State == TicketState.ดำเนินการเสร็จสิ้น).ToList();
-        return View(finishedTickets);
-    }
-
-    
-    public IActionResult FinishTicketDetail(long id)
-    {
-        var ticket = _context.Tickets
-            .Include(t => t.Agency)  // Ensure related data is loaded
-            .FirstOrDefault(t => t.ID == id);
-
-        if (ticket == null)
+        
+        public IActionResult FinishTicketDetail(long id)
         {
-            return NotFound();
+            var ticket = _context.Tickets
+                .Include(t => t.Agency)  // Ensure related data is loaded
+                .FirstOrDefault(t => t.ID == id);
+
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            // Ensure that StartDate and EndDate are not null
+            if (!ticket.StartDate.HasValue || !ticket.EndDate.HasValue)
+            {
+                ticket.StartDate = ticket.StartDate ?? DateTime.Now;
+                ticket.EndDate = ticket.EndDate ?? DateTime.Now;
+            }
+
+            var model = new TicketDetailViewModel
+            {
+                Topic = ticket.Topic,
+                AgencyName = ticket.Agency?.AgencyName ?? "Unknown",
+                Email = ticket.Email,
+                TypeOfProblem = ticket.TypeOfProblem,
+                Name = ticket.Name,
+                PhoneNumber = ticket.PhoneNumber,
+                StartDate = ticket.StartDate.Value, // Non-nullable
+                EndDate = ticket.EndDate.Value,     // Non-nullable
+                ProblemDescription = ticket.ProblemDescription
+            };
+
+            return View(model);
         }
 
-        // Ensure that StartDate and EndDate are not null
-        if (!ticket.StartDate.HasValue || !ticket.EndDate.HasValue)
+        [HttpPost] // Use POST to prevent accidental deletions
+        public IActionResult DeleteFinishTicket(int id)
         {
-            ticket.StartDate = ticket.StartDate ?? DateTime.Now;
-            ticket.EndDate = ticket.EndDate ?? DateTime.Now;
+            var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
+            if (ticket != null)
+            {
+                _context.Tickets.Remove(ticket);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("FinishTicket"); // Redirect to the main page after deletion
         }
 
-        var model = new TicketDetailViewModel
-        {
-            Topic = ticket.Topic,
-            AgencyName = ticket.Agency?.AgencyName ?? "Unknown",
-            Email = ticket.Email,
-            TypeOfProblem = ticket.TypeOfProblem,
-            Name = ticket.Name,
-            PhoneNumber = ticket.PhoneNumber,
-            StartDate = ticket.StartDate.Value, // Non-nullable
-            EndDate = ticket.EndDate.Value,     // Non-nullable
-            ProblemDescription = ticket.ProblemDescription
-        };
 
-        return View(model);
-    }
 
-    [HttpPost] // Use POST to prevent accidental deletions
-    public IActionResult DeleteFinishTicket(int id)
-    {
-        var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
-        if (ticket != null)
-        {
-            _context.Tickets.Remove(ticket);
-            _context.SaveChanges();
+            // Report
+            public IActionResult Report()
+            {
+                return View();
+            }
+
+            // Error Handling
+            [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+            public IActionResult Error()
+            {
+                return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            }
         }
 
-        return RedirectToAction("FinishTicket"); // Redirect to the main page after deletion
-    }
-
-
-
-        // Report
-        public IActionResult Report()
+        // Request models for Add, Edit, and Delete Agency
+        public class EditAgencyRequest
         {
-            return View();
+            public int Id { get; set; }
+            public required string NewName { get; set; }
         }
 
-        // Error Handling
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public class DeleteAgencyRequest
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            public int Id { get; set; }
+        }
+
+        public class AddAgencyRequest
+        {
+            public required string NewName { get; set; }
         }
     }
-
-    // Request models for Add, Edit, and Delete Agency
-    public class EditAgencyRequest
-    {
-        public int Id { get; set; }
-        public required string NewName { get; set; }
-    }
-
-    public class DeleteAgencyRequest
-    {
-        public int Id { get; set; }
-    }
-
-    public class AddAgencyRequest
-    {
-        public required string NewName { get; set; }
-    }
-}

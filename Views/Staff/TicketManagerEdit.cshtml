@@ -61,11 +61,21 @@
             </div>
             <div class="row mb-3">
                 <div class="col-md-6">
-                    <label for="phoneNumber" class="form-label">เบอร์โทรศัพท์ที่สามารถติดต่อได้</label>
-                    <input type="text" class="form-control" id="phoneNumber" disabled/>
+                    <label for="Name" class="form-label">ชื่อผู้แจ้ง</label>
+                    <input type="text" class="form-control" id="Name" disabled/>
                 </div>
                 <div class="col-md-6">
+                    <label for="phoneNumber" class="form-label">เบอร์โทรศัพท์ที่สามารถติดต่อได้</label>
+                    <input type="text" class="form-control disabled-field" id="phoneNumber" disabled>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
                     <label for="reportDate" class="form-label">วันที่แจ้ง</label>
+                    <input type="text" class="form-control" id="reportDate" disabled/>
+                </div>
+                <div class="col-md-6">
+                    <label for="reportDate" class="form-label">สถานะตั๋ว</label>
                     <input type="text" class="form-control disabled-field" id="reportDate" disabled>
                 </div>
             </div>
@@ -73,6 +83,12 @@
                 <label for="problemDescription" class="form-label">ปัญหาที่พบ</label>
                 <textarea class="form-control" id="problemDescription" rows="4" disabled></textarea>
             </div>
+            <div style="display: flex; justify-content: flex-end;">
+            <button type="submit" class="btn" style="background-color: rgb(0, 149, 199); color: white;">เปลี่ยนสถานะเป็นรับเรื่องร้องเรียน</button>&nbsp;&nbsp;
+            <button type="submit" class="btn" style="background-color: rgba(255, 166, 0, 0.904); color: white;">เปลี่ยนสถานะเป็นอยู่ระหว่างดำเนินการ</button>&nbsp;&nbsp;
+            <button type="submit" class="btn" style="background-color: green; color: white;">เปลี่ยนสถานะเป็นดำเนินการเสร็จสิ้น</button>&nbsp;&nbsp;
+            </div>
+            <br>
             <div style="display: flex; justify-content: flex-end;">
             <button type="submit" class="btn btn-primary ms-auto">ย้อนกลับ</button>
             </div>
