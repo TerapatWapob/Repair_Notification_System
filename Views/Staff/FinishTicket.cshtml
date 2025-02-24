@@ -29,24 +29,30 @@
 
 .content {
     background-color: white;
-    padding: 0px 30px;
+    padding: 10px 30px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     width: 100%; /* Ensures content width matches header */
 }
 
 .content .row {
-    padding: 15px 0; /* Increase top and bottom padding */
+    padding: 5px 0; /* Increase top and bottom padding */
     align-items: center; /* Keep content vertically centered */
 }
+
+.content .col {
+  border: 0px solid #ddd; /* Add a light border to columns for clarity */
+  padding: 10px;
+  text-align: center;
+    }
 
 </style>
 
 <br><br>
 
 @{
-    int index = 1;  // Initialize index starting at 1
+    int index = 1;  
+    var today = DateTime.Today;
 }
-
 <div class="container mt-5">
     <div class="header">
         <h2>รายการที่ดำเนินการเรียบร้อยแล้ว</h2>
@@ -56,22 +62,34 @@
         <div class="col">เรื่อง</div>
         <div class="col-3">ประเภทของปัญหา</div>
         <div class="col-3">สถานะ</div>
+        <div class="col-2"></div>
         <div class="col-1"></div>
     </div>
 
     <div class="content">
         @foreach (var ticket in Model)
         {
-            <div class="row text-center">
-                <div class="col-1">@index</div>  <!-- Use the index variable -->
-                <div class="col">@ticket.Topic</div>
-                <div class="col-3">@ticket.TypeOfProblem</div>
-                <div class="col-3">@ticket.State</div>
-                <div class="col-1">
-                    <a href="@Url.Action("FinishTicketDetail", "Staff", new { id = ticket.ID })" class="btn btn-info">Info</a>
+            if (ticket.EndDate != null && (today - ticket.EndDate).Days <= 365)
+            {
+                <div class="row text-center">
+                    <div class="col-1">@index</div>
+                    <div class="col">@ticket.Topic</div>
+                    <div class="col-3">@ticket.TypeOfProblem</div>
+                    <div class="col-3">@ticket.State</div>
+                    <div class="col-2">
+                        <a href="@Url.Action("FinishTicketDetail", "Staff", new { id = ticket.ID })" class="btn btn-info">รายละเอียด</a>
+                    </div>
+                    <div class="col-1">
+                    <form method="post" asp-action="DeleteFinishTicket" asp-controller="Staff">
+                        <input type="hidden" name="id" value="@ticket.ID" />
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('คุณต้องการลบข้อมูลนี้หรือไม่?\nโปรดทราบว่าการกระทำนี้ไม่สามารถย้อนกลับได้');">
+                            ลบ
+                        </button>
+                    </form>
                 </div>
-            </div>
-            index++;  <!-- Increment the index for each iteration -->
+                </div>
+                index++;
+            }
         }
     </div>
 </div>

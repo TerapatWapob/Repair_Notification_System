@@ -121,7 +121,8 @@ namespace Repair_Notification_System.Controllers
         // Ticket Manager
         public IActionResult TicketManager()
         {
-            return View();
+            var TicketManager = _context.Tickets.Where(t=> t.State != TicketState.ดำเนินการเสร็จสิ้น).ToList();
+            return View(TicketManager);
         }
 
         // Edit Ticket Manager
@@ -169,6 +170,19 @@ namespace Repair_Notification_System.Controllers
         };
 
         return View(model);
+    }
+
+    [HttpPost] // Use POST to prevent accidental deletions
+    public IActionResult DeleteFinishTicket(int id)
+    {
+        var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
+        if (ticket != null)
+        {
+            _context.Tickets.Remove(ticket);
+            _context.SaveChanges();
+        }
+
+        return RedirectToAction("FinishTicket"); // Redirect to the main page after deletion
     }
 
 

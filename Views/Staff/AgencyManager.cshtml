@@ -16,10 +16,15 @@
         width: 100%;
     }
     .subheader {
-        background-color: #98caff;
-        padding: 10px;
+        background-color: #f0f8ff; /* Light blue background */
+        padding: 10px 15px; /* Adjust padding for consistency */
         font-weight: bold;
-        font-size: 1rem;
+        font-size: 1rem; /* Smaller font size than header */
+        width: 100%; /* Make sure it's the same width as header */
+        box-sizing: border-box; /* Ensures padding doesn't add extra width */
+        display: flex;
+        justify-content: space-between; /* Spread columns evenly */
+        align-items: center; /* Vertically center text */
     }
     .content {
         background-color: white;
@@ -35,7 +40,7 @@
     }
     .agency-item {
         text-align: center;
-        padding: 10px;
+        padding: 5px;
     }
     .agency-id {
         width: 10%;
@@ -52,13 +57,14 @@
 <div class="container mt-5">
     <div class="header">
         <h2>ระบบจัดการรายชื่อหน่วยงาน</h2>
-        <div class="subheader row text-center">
-            <div class="col-1">หมายเลข</div>
-            <div class="col">ชื่อหน่วยงาน</div>
-            <div class="col-1"></div>
-            <div class="col-1"></div>
-        </div>
+        
     </div>
+    <div class="subheader text-center">
+            <div class="col-1">หมายเลข</div>
+            <div class="col">&emsp;&emsp;&emsp;ชื่อหน่วยงาน</div>
+            <div class="col-2"></div>
+            <div class="col-2"></div>
+        </div>
 
     <div class="content" id="agency-list">
         @foreach (var (agency, index) in Model.Where(a => a.AgencyState).Select((agency, index) => (agency, index)))
@@ -166,20 +172,6 @@
             });
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     function addAgencyRow() {
         let container = document.getElementById("agency-list");
