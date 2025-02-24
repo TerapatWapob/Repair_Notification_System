@@ -281,7 +281,7 @@ namespace Repair_Notification_System
                     PhoneNumber = "0000000000",
                     Username = "SystemAdmin",
                     Password = "SystemAdmin", // NOTE: Hash this in production!
-                    Class = UserRole.SystemAdmin
+                    UserRole = UserRole.SystemAdmin
                 },
                 new User
                 {
@@ -291,7 +291,7 @@ namespace Repair_Notification_System
                     PhoneNumber = "0000000000",
                     Username = "Admin",
                     Password = "Admin", // NOTE: Hash this in production!
-                    Class = UserRole.Admin
+                    UserRole = UserRole.Admin
                 }
             );
 

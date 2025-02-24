@@ -100,8 +100,8 @@ public class Agency
         [Required]
         public required string Password { get; set; }
 
-        [Required]
-        public UserRole Class { get; set; }
+        [Required]        
+        public UserRole UserRole { get; set; }
     }
 
     public enum UserRole
