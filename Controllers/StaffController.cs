@@ -161,23 +161,34 @@ namespace Repair_Notification_System.Controllers
                     }
                     return RedirectToAction("TicketManager");
                 }
-                [HttpPost]
-                public IActionResult UpdateTicketStatus(long id, string newStatus)
-                {
-                    var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
-                    if (ticket == null)
-                    {
-                        return NotFound();
-                    }
+[HttpPost]
+public IActionResult UpdateTicketStatus(long id, string newStatus)
+{
+    var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
+    if (ticket == null)
+    {
+        return NotFound();
+    }
 
-                    if (Enum.TryParse(newStatus, out TicketState status))
-                    {
-                        ticket.State = status;
-                        _context.SaveChanges();
-                    }
-                    
-                    return RedirectToAction("TicketManagerEdit", new { id });
-                }
+    // Convert newStatus (string) to TicketState (enum)
+    if (Enum.TryParse(typeof(TicketState), newStatus, out var parsedState))
+    {
+        ticket.State = (TicketState)parsedState; // Assign the converted enum value
+
+        if (ticket.State == TicketState.ดำเนินการเสร็จสิ้น) // Check if it's "Completed"
+        {
+            ticket.EndDate = DateTime.Today; // Set EndDate to today
+            _context.SaveChanges();
+            return RedirectToAction("TicketManager"); // Redirect to TicketManager
+        }
+
+        _context.SaveChanges();
+        return RedirectToAction("TicketManagerEdit", new { id }); // Stay in TicketManagerEdit
+    }
+
+    return BadRequest("Invalid status provided"); // Handle invalid values
+}
+
 
 
 
