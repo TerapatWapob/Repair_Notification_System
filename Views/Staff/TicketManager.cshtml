@@ -3,46 +3,49 @@
 }
 @model List<RPS_DB.Models.Ticket>
 
-  <style>
+<style>
     .header {
-      background-color: #007BFF;
-      color: white;
-      text-align: center;
-      padding: 15px;
-      border-radius: 10px 10px 0 0;
-      text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
-      font-size: 1.5rem;
-      width: 100%;
+        background-color: #007BFF;
+        color: white;
+        text-align: center;
+        padding: 15px;
+        border-radius: 10px 10px 0 0;
+        text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+        font-size: 1.5rem;
+        width: 100%;
     }
     .subheader {
-      background-color: #f0f8ff;
-      padding: 10px 15px;
-      font-weight: bold;
-      font-size: 1rem;
-      width: 100%;
-      box-sizing: border-box;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+        background-color: #f0f8ff;
+        padding: 10px 15px;
+        font-weight: bold;
+        font-size: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
     .content {
-      background-color: white;
-      padding: 10px 30px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      width: 100%;
+        background-color: white;
+        padding: 10px 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
     }
     .content .row {
-      padding: 5px 0;
-      align-items: center;
+        padding: 5px 0;
+        align-items: center;
     }
     .content .col {
-      padding: 10px;
-      text-align: center;
+        padding: 10px;
+        text-align: center;
+        white-space: nowrap;  /* Prevents text from wrapping */
+        overflow: hidden;  /* Hides overflow */
+        text-overflow: ellipsis; /* Adds "..." for long text */
+        max-width: 150px; /* Adjust width as needed */
     }
-  </style>
-
-    <br>
-    <br>
+</style>
+<br>
+<br>
 
 @{
     int index = 1;  
@@ -50,58 +53,46 @@
 }
 
 <div class="container mt-5">
-  <div class="header w-100">
-    <h2>ระบบจัดการรายการแจ้งซ่อมในระบบ</h2>
-  </div>
+    <div class="header w-100">
+        <h2>ระบบจัดการรายการแจ้งซ่อมในระบบ</h2>
+    </div>
 
-  <div class="subheader row text-center w-100 m-0">
-    <div class="col-1 d-flex justify-content-center align-items-center">รายการที่</div>
-    <div class="col">เรื่อง</div>
-    <div class="col-3 d-flex justify-content-center align-items-center">ผู้รายงาน</div>
-    <div class="col-3 d-flex justify-content-center align-items-center">วันที่รายงาน</div>
-    <div class="col-1 d-flex justify-content-center align-items-center"></div>
-    <div class="col-1 d-flex justify-content-center align-items-center"></div>
-    <div class="col-1 d-flex justify-content-center align-items-center"></div>
-  </div>
-
-  <div class="content row w-100 m-0">
-@foreach (var ticket in Model)
-    {
-        if (ticket.StartDate != null)
-        {
-            <div class="row text-center">
-                <div class="col-1 d-flex justify-content-center align-items-center">@index</div>
-                <div class="col d-flex justify-content-center align-items-center">@ticket.Topic</div>
-                <div class="col-3 d-flex justify-content-center align-items-center">@ticket.Name</div>
-                <div class="col-3 d-flex justify-content-center align-items-center">@ticket.StartDate</div>
-                <div class="col-1 d-flex justify-content-center align-items-center">
-                <a href="@Url.Action("EditTicket", "Staff", new { id = ticket.ID })" class="btn btn-info">แก้ไข</a>
-                </div>
-                <div class="col-1 d-flex justify-content-center align-items-center">
-                    <a href="@Url.Action("DeleteTicket", "Staff", new { id = ticket.ID })" class="btn btn-danger" 
-                      onclick="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบรายการนี้?');">ลบ</a>
-                </div>
-                <div class="col-1 d-flex justify-content-center align-items-center">
-                    <form asp-action="MarkAsCompleted" asp-controller="Staff" method="post" onsubmit="return confirm('คุณแน่ใจหรือไม่ว่าต้องการเปลี่ยนสถานะเป็น ดำเนินการเสร็จสิ้น?');">
-                    <input type="hidden" name="id" value="@ticket.ID" />
-                    <button type="submit" class="btn btn-success">เสร็จสิ้น</button>
-                    </form>
-
-                </div>
-
-
-            </div>
-            index++;
-        }
-    }
-
-  </div>
+<div class="subheader row text-center m-0">
+    <div class="col-1">รายการที่</div>
+    <div class="col-2">เรื่อง</div>
+    <div class="col-2">ผู้รายงาน</div>
+    <div class="col-2">วันที่รายงาน</div>
+    <div class="col-2">สถานะตั๋ว</div>
+    <div class="col-1"></div>
+    <div class="col-1"></div>
+    <div class="col-1"></div>
 </div>
 
-<script>
-  function confirmMarkAsCompleted(ticketId) {
-      if (confirm("คุณแน่ใจหรือไม่ว่าต้องการเปลี่ยนสถานะเป็น 'ดำเนินการเสร็จสิ้น'?")) {
-          window.location.href = '/Staff/MarkAsCompleted/' + ticketId;
-      }
-  }
-</script>
+<!-- Content -->
+<div class="content">
+    @foreach (var ticket in Model.OrderByDescending(t => t.ID))
+    {
+        <div class="row text-center m-0">
+            <div class="col-1">@index</div>
+            <div class="col-2">@ticket.Topic</div>
+            <div class="col-2">@ticket.Name</div>
+            <div class="col-2">@ticket.StartDate</div>
+            <div class="col-2">@ticket.State</div>
+            <div class="col-1">
+                <a asp-controller="Staff" asp-action="TicketManagerEdit" asp-route-id="@ticket.ID" 
+                   class="btn btn-primary btn-sm">แก้ไข</a>
+            </div>
+            <div class="col-1">
+                <a href="@Url.Action("DeleteTicket", "Staff", new { id = ticket.ID })" 
+                   class="btn btn-danger btn-sm">ลบ</a>
+            </div>
+            <div class="col-1">
+                <form asp-action="MarkAsCompleted" asp-controller="Staff" method="post">
+                    <input type="hidden" name="id" value="@ticket.ID" />
+                    <button type="submit" class="btn btn-success btn-sm">เสร็จสิ้น</button>
+                </form>
+            </div>
+        </div>
+        index++;
+    }
+</div>

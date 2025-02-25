@@ -118,7 +118,6 @@ namespace Repair_Notification_System.Controllers
             }
             return Json(new { success = false, message = "Agency not found." });
         }
-
                 public IActionResult TicketManager()
                 {
                     var unfinishedTickets = _context.Tickets
@@ -127,14 +126,19 @@ namespace Repair_Notification_System.Controllers
 
                     return View(unfinishedTickets);
                 }
-
-                public IActionResult EditTicket(int id)
+                public IActionResult TicketManagerEdit(int id)
                 {
-                    var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
-                    if (ticket == null) return NotFound();
-                    return View("TicketManagerDetail", ticket);
-                }
+                    var ticket = _context.Tickets
+                        .Include(t => t.Agency) // If AgencyName is in a related table
+                        .FirstOrDefault(t => t.ID == id);
 
+                    if (ticket == null)
+                    {
+                        return NotFound(); // Show 404 if ticket doesn't exist
+                    }
+
+                    return View("TicketManagerEdit", ticket); // Load TicketManagerEdit.cshtml
+                }
                 public IActionResult DeleteTicket(int id)
                 {
                     var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
@@ -156,6 +160,23 @@ namespace Repair_Notification_System.Controllers
                         _context.SaveChanges();
                     }
                     return RedirectToAction("TicketManager");
+                }
+                [HttpPost]
+                public IActionResult UpdateTicketStatus(long id, string newStatus)
+                {
+                    var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
+                    if (ticket == null)
+                    {
+                        return NotFound();
+                    }
+
+                    if (Enum.TryParse(newStatus, out TicketState status))
+                    {
+                        ticket.State = status;
+                        _context.SaveChanges();
+                    }
+                    
+                    return RedirectToAction("TicketManagerEdit", new { id });
                 }
 
 

@@ -1,6 +1,7 @@
 ﻿@{
     Layout = "_StaffLayout"; // Specify a custom layout
 }
+@model RPS_DB.Models.Ticket
 <style>
   .ticketmanageradd-header {
     background-color: #007BFF; /* Blue background */
@@ -30,6 +31,17 @@
     background-color: #218838;
     color: white;
   }
+  .custom-status {
+      background-color: rgb(30, 77, 230) !important; /* Change background color */
+      color: white !important; /* Change text color */
+      font-weight: bold; /* Make text bold */
+      border: 2px solid rgb(49, 0, 139); /* Add a border */
+      pointer-events: none; /* Keep it disabled but allow styling */
+      opacity: 1 !important; /* Override default disabled opacity */
+  }
+
+</style>
+
 </style>
     
   <div class="form-container">
@@ -42,57 +54,91 @@
       <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="subject" class="form-label">เรื่อง</label>
-                    <input type="text" class="form-control" id="subject" disabled>
+                    <input type="text" class="form-control" id="subject" value="@Model.Topic" disabled>
                 </div>
                 <div class="col-md-6">
                     <label for="department" class="form-label">สังกัดหน่วยงาน</label>
-                    <input type="text" class="form-control" id="department" disabled>
+                    <input type="text" class="form-control" id="department" value="@Model.Agency?.AgencyName" disabled>
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="email" class="form-label">อีเมล</label>
-                    <input type="email" class="form-control" id="email" disabled>
+                    <input type="email" class="form-control" id="email" value="@Model.Email" disabled>
                 </div>
                 <div class="col-md-6">
                     <label for="problemType" class="form-label">ประเภทของปัญหา</label>
-                    <input type="problemType" class="form-control" id="problemType" disabled>
+                    <input type="problemType" class="form-control" id="problemType" value="@Model.TypeOfProblem" disabled>
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="Name" class="form-label">ชื่อผู้แจ้ง</label>
-                    <input type="text" class="form-control" id="Name" disabled/>
+                    <input type="text" class="form-control" id="Name" value="@Model.Name" disabled/>
                 </div>
                 <div class="col-md-6">
                     <label for="phoneNumber" class="form-label">เบอร์โทรศัพท์ที่สามารถติดต่อได้</label>
-                    <input type="text" class="form-control disabled-field" id="phoneNumber" disabled>
+                    <input type="text" class="form-control disabled-field" id="phoneNumber" value="@Model.PhoneNumber" disabled>
                 </div>
             </div>
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="reportDate" class="form-label">วันที่แจ้ง</label>
-                    <input type="text" class="form-control" id="reportDate" disabled/>
+                    <input type="text" class="form-control" id="reportDate" value="@Model.StartDate" disabled/>
                 </div>
                 <div class="col-md-6">
-                    <label for="reportDate" class="form-label">สถานะตั๋ว</label>
-                    <input type="text" class="form-control disabled-field" id="reportDate" disabled>
+                    <label for="ticketState" class="form-label">สถานะตั๋ว</label>
+                    <input type="text" class="form-control ticket-state" id="ticketState" value="@Model.State" disabled>
                 </div>
             </div>
             <div class="mb-3">
                 <label for="problemDescription" class="form-label">ปัญหาที่พบ</label>
-                <textarea class="form-control" id="problemDescription" rows="4" disabled></textarea>
+                <textarea class="form-control" id="problemDescription" rows="4" disabled>@Model.ProblemDescription</textarea>
             </div>
-            <div style="display: flex; justify-content: flex-end;">
-            <button type="submit" class="btn" style="background-color: rgb(0, 149, 199); color: white;">เปลี่ยนสถานะเป็นรับเรื่องร้องเรียน</button>&nbsp;&nbsp;
-            <button type="submit" class="btn" style="background-color: rgba(255, 166, 0, 0.904); color: white;">เปลี่ยนสถานะเป็นอยู่ระหว่างดำเนินการ</button>&nbsp;&nbsp;
-            <button type="submit" class="btn" style="background-color: green; color: white;">เปลี่ยนสถานะเป็นดำเนินการเสร็จสิ้น</button>&nbsp;&nbsp;
-            </div>
+            <form method="post" asp-action="UpdateTicketStatus" asp-controller="Staff">
+                <input type="hidden" name="id" value="@Model.ID" />
+                <div style="display: flex; justify-content: flex-end;">
+                    <button type="submit" class="btn" style="background-color: rgb(0, 149, 199); color: white;"
+                        name="newStatus" value="รับเรื่องร้องเรียน">เปลี่ยนสถานะเป็นรับเรื่องร้องเรียน</button>&nbsp;&nbsp;
+                    <button type="submit" class="btn" style="background-color: rgba(255, 166, 0, 0.904); color: white;"
+                        name="newStatus" value="อยู่ระหว่างดำเนินการ">เปลี่ยนสถานะเป็นอยู่ระหว่างดำเนินการ</button>&nbsp;&nbsp;
+                    <button type="submit" class="btn" style="background-color: green; color: white;" name="newStatus" value="ดำเนินการเสร็จสิ้น" onclick="return confirmCompletion();">
+                    เปลี่ยนสถานะเป็นดำเนินการเสร็จสิ้น
+                    </button>
+                </div>
+            </form>
             <br>
             <div style="display: flex; justify-content: flex-end;">
-            <button type="submit" class="btn btn-primary ms-auto">ย้อนกลับ</button>
+                <a asp-controller="Staff" asp-action="TicketManager" class="btn btn-primary ms-auto">ย้อนกลับ</a>
             </div>
     </div>
   </div>
 
-    
+  
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        var ticketStateInput = document.getElementById("ticketState");
+        if (ticketStateInput) {
+            var stateText = ticketStateInput.value.trim(); // Trim any spaces
+
+            console.log("Ticket State:", stateText); // Debugging log
+
+            if (stateText.includes("รับเรื่องร้องเรียน")) {
+                ticketStateInput.style.backgroundColor = "blue";
+                ticketStateInput.style.color = "white";
+            } else if (stateText.includes("อยู่ระหว่างดำเนินการ")) {
+                ticketStateInput.style.backgroundColor = "yellow";
+                ticketStateInput.style.color = "black";
+            } else if (stateText.includes("ดำเนินการเสร็จสิ้น")) {
+                ticketStateInput.style.backgroundColor = "green";
+                ticketStateInput.style.color = "white";
+            }
+        }
+    });
+</script>
+
+<script>
+    function confirmCompletion() {
+        return confirm("คุณแน่ใจหรือไม่ว่าต้องการเปลี่ยนสถานะเป็น 'ดำเนินการเสร็จสิ้น'?\nโปรดทราบว่าหากออกจากหน้านี้ในขณะที่สถานะตั๋วคือ 'ดำเนินการเสร็จสิ้น' \nตั๋วจะถูกย้ายไปในรายการที่เรียบร้อยแล้ว\nและการกระทำนี้ไม่สามารถย้อนกลับได้");
+    }
+</script>

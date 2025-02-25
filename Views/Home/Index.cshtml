@@ -46,8 +46,9 @@
 
 <div class="container mt-5">
     <div class="header-bg text-center mb-4">
-        @foreach (var ticket in Model.OrderByDescending(t => t.StartDate))
+        @foreach (var ticket in Model.OrderByDescending(t => t.ID))
         {
+            var today = DateTime.Today;
             // Always show tickets without an EndDate
             if (ticket.EndDate == null)
             {
@@ -68,8 +69,6 @@
             else
             {
                 var endDate = ticket.EndDate.Value;
-                var today = DateTime.Today;
-                
                 // Show tickets only if they are within 14 days after their EndDate
                 if (today <= endDate.AddDays(14))
                 {
