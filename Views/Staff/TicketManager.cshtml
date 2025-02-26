@@ -20,7 +20,6 @@
         font-weight: bold;
         font-size: 1rem;
         width: 100%;
-        box-sizing: border-box;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -38,14 +37,40 @@
     .content .col {
         padding: 10px;
         text-align: center;
-        white-space: nowrap;  /* Prevents text from wrapping */
-        overflow: hidden;  /* Hides overflow */
-        text-overflow: ellipsis; /* Adds "..." for long text */
-        max-width: 150px; /* Adjust width as needed */
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 150px;
     }
 </style>
-<br>
-<br>
+
+<script>
+    function confirmDelete(event) {
+        if (!confirm("คุณต้องการลบข้อมูลนี้หรือไม่?\nโปรดทราบว่าการกระทำนี้ไม่สามารถย้อนกลับได้!")) {
+            event.preventDefault();
+        }
+    }
+
+    function confirmFinish(event) {
+        if (!confirm("คุณต้องการทำเครื่องหมายตั๋วนี้ว่าเสร็จสิ้นหรือไม่?\nตั๋วจะถูกย้ายไปยังหน้ารายการที่ดำเนินการเสร็จสิ้นและไม่สามารถย้อนกลับได้")) {
+            event.preventDefault();
+        }
+    }
+
+    function confirmDeleteAll(event) {
+        if (!confirm("⚠️ คุณต้องการลบ 'ตั๋วทั้งหมด' หรือไม่?\nโปรดทราบว่าการกระทำนี้ไม่สามารถย้อนกลับได้!")) {
+            event.preventDefault();
+        }
+    }
+
+    function confirmCompleteAll(event) {
+        if (!confirm("✅ คุณต้องการทำเครื่องหมาย 'ตั๋วทั้งหมด' ว่าเสร็จสิ้นหรือไม่?\nตั๋วจะถูกย้ายไปยังหน้ารายการที่ดำเนินการเสร็จสิ้นและไม่สามารถย้อนกลับได้")) {
+            event.preventDefault();
+        }
+    }
+</script>
+
+<br><br>
 
 @{
     int index = 1;  
@@ -57,42 +82,51 @@
         <h2>ระบบจัดการรายการแจ้งซ่อมในระบบ</h2>
     </div>
 
-<div class="subheader row text-center m-0">
-    <div class="col-1">รายการที่</div>
-    <div class="col-2">เรื่อง</div>
-    <div class="col-2">ผู้รายงาน</div>
-    <div class="col-2">วันที่รายงาน</div>
-    <div class="col-2">สถานะตั๋ว</div>
-    <div class="col-1"></div>
-    <div class="col-1"></div>
-    <div class="col-1"></div>
-</div>
+    <div class="subheader row text-center m-0">
+        <div class="col-1">รายการที่</div>
+        <div class="col-2">เรื่อง</div>
+        <div class="col-2">ผู้รายงาน</div>
+        <div class="col-2">วันที่รายงาน</div>
+        <div class="col-2">สถานะตั๋ว</div>
+        <div class="col-1"></div>
+        <div class="col-1"></div>
+        <div class="col-1"></div>
+    </div>
 
-<!-- Content -->
-<div class="content">
-    @foreach (var ticket in Model.OrderByDescending(t => t.ID))
-    {
-        <div class="row text-center m-0">
-            <div class="col-1">@index</div>
-            <div class="col-2">@ticket.Topic</div>
-            <div class="col-2">@ticket.Name</div>
-            <div class="col-2">@ticket.StartDate</div>
-            <div class="col-2">@ticket.State</div>
-            <div class="col-1">
-                <a asp-controller="Staff" asp-action="TicketManagerEdit" asp-route-id="@ticket.ID" 
-                   class="btn btn-primary btn-sm">แก้ไข</a>
+    <!-- Content -->
+    <div class="content">
+        @foreach (var ticket in Model.OrderByDescending(t => t.ID))
+        {
+            <div class="row text-center m-0">
+                <div class="col-1">@index</div>
+                <div class="col-2">@ticket.Topic</div>
+                <div class="col-2">@ticket.Name</div>
+                <div class="col-2">@ticket.StartDate?.ToString("dd/MM/yyyy")</div>
+                <div class="col-2">@ticket.State</div>
+                <div class="col-1">
+                    <a asp-controller="Staff" asp-action="TicketManagerEdit" asp-route-id="@ticket.ID" 
+                       class="btn btn-primary btn-sm">แก้ไข</a>
+                </div>
+                <div class="col-1">
+                    <a href="@Url.Action("DeleteTicket", "Staff", new { id = ticket.ID })" 
+                       class="btn btn-danger btn-sm" onclick="confirmDelete(event)">ลบ</a>
+                </div>
+                <div class="col-1">
+                    <form asp-action="MarkAsCompleted" asp-controller="Staff" method="post" onsubmit="confirmFinish(event)">
+                        <input type="hidden" name="id" value="@ticket.ID" />
+                        <button type="submit" class="btn btn-success btn-sm">เสร็จสิ้น</button>
+                    </form>
+                </div>
             </div>
-            <div class="col-1">
-                <a href="@Url.Action("DeleteTicket", "Staff", new { id = ticket.ID })" 
-                   class="btn btn-danger btn-sm">ลบ</a>
-            </div>
-            <div class="col-1">
-                <form asp-action="MarkAsCompleted" asp-controller="Staff" method="post">
-                    <input type="hidden" name="id" value="@ticket.ID" />
-                    <button type="submit" class="btn btn-success btn-sm">เสร็จสิ้น</button>
-                </form>
-            </div>
+            index++;
+        }
+        <div class="text-end mt-3">
+            <form asp-action="DeleteAllTickets" asp-controller="Staff" method="post" onsubmit="confirmDeleteAll(event)" class="d-inline">
+            <button type="submit" class="btn btn-danger">🗑️ ลบทั้งหมด</button>
+            </form>
+            <form asp-action="MarkAllAsCompleted" asp-controller="Staff" method="post" onsubmit="confirmCompleteAll(event)" class="d-inline">
+                <button type="submit" class="btn btn-success">✅ เสร็จสิ้นทั้งหมด</button>
+            </form>
         </div>
-        index++;
-    }
+    </div>
 </div>

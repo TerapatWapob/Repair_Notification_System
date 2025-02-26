@@ -118,76 +118,95 @@ namespace Repair_Notification_System.Controllers
             }
             return Json(new { success = false, message = "Agency not found." });
         }
-                public IActionResult TicketManager()
-                {
-                    var unfinishedTickets = _context.Tickets
-                        .Where(t => t.State != TicketState.ดำเนินการเสร็จสิ้น)
-                        .ToList();
-
-                    return View(unfinishedTickets);
-                }
-                public IActionResult TicketManagerEdit(int id)
-                {
-                    var ticket = _context.Tickets
-                        .Include(t => t.Agency) // If AgencyName is in a related table
-                        .FirstOrDefault(t => t.ID == id);
-
-                    if (ticket == null)
-                    {
-                        return NotFound(); // Show 404 if ticket doesn't exist
-                    }
-
-                    return View("TicketManagerEdit", ticket); // Load TicketManagerEdit.cshtml
-                }
-                public IActionResult DeleteTicket(int id)
-                {
-                    var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
-                    if (ticket != null)
-                    {
-                        _context.Tickets.Remove(ticket);
-                        _context.SaveChanges();
-                    }
-                    return RedirectToAction("TicketManager");
-                }
-                [HttpPost]
-                public IActionResult MarkAsCompleted(int id)
-                {
-                    var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
-                    if (ticket != null)
-                    {
-                        ticket.State = TicketState.ดำเนินการเสร็จสิ้น;
-                        ticket.EndDate = DateTime.Today;
-                        _context.SaveChanges();
-                    }
-                    return RedirectToAction("TicketManager");
-                }
-[HttpPost]
-public IActionResult UpdateTicketStatus(long id, string newStatus)
-{
-    var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
-    if (ticket == null)
-    {
-        return NotFound();
-    }
-
-    // Convert newStatus (string) to TicketState (enum)
-    if (Enum.TryParse(typeof(TicketState), newStatus, out var parsedState))
-    {
-        ticket.State = (TicketState)parsedState; // Assign the converted enum value
-
-        if (ticket.State == TicketState.ดำเนินการเสร็จสิ้น) // Check if it's "Completed"
+        public IActionResult TicketManager()
         {
-            ticket.EndDate = DateTime.Today; // Set EndDate to today
+            var unfinishedTickets = _context.Tickets
+                 .Where(t => t.State != TicketState.ดำเนินการเสร็จสิ้น)
+                  .ToList();
+                return View(unfinishedTickets);
+        }
+        public IActionResult TicketManagerEdit(int id)
+        {
+            var ticket = _context.Tickets
+                .Include(t => t.Agency) // If AgencyName is in a related table
+                .FirstOrDefault(t => t.ID == id);
+            if (ticket == null)
+            {
+                return NotFound(); // Show 404 if ticket doesn't exist
+            }
+
+            return View("TicketManagerEdit", ticket); // Load TicketManagerEdit.cshtml
+        }
+        public IActionResult DeleteTicket(int id)
+        {
+            var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
+            if (ticket != null)
+            {
+                _context.Tickets.Remove(ticket);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("TicketManager");
+        }
+        [HttpPost]
+        public IActionResult MarkAsCompleted(int id)
+        {
+               var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
+             if (ticket != null)
+            {
+                ticket.State = TicketState.ดำเนินการเสร็จสิ้น;
+                ticket.EndDate = DateTime.Today;
+                _context.SaveChanges();
+            }
+            return RedirectToAction("TicketManager");
+        }
+        [HttpPost]
+        public IActionResult UpdateTicketStatus(long id, string newStatus)
+        {
+            var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
+            if (ticket == null)
+            {
+                return NotFound();
+            }
+
+            // Convert newStatus (string) to TicketState (enum)
+            if (Enum.TryParse(typeof(TicketState), newStatus, out var parsedState))
+            {
+                ticket.State = (TicketState)parsedState; // Assign the converted enum value
+
+                if (ticket.State == TicketState.ดำเนินการเสร็จสิ้น) // Check if it's "Completed"
+                {
+                    ticket.EndDate = DateTime.Today; // Set EndDate to today
+                    _context.SaveChanges();
+                    return RedirectToAction("TicketManager"); // Redirect to TicketManager
+                }
+
+                _context.SaveChanges();
+                return RedirectToAction("TicketManagerEdit", new { id }); // Stay in TicketManagerEdit
+            }
+
+            return BadRequest("Invalid status provided"); // Handle invalid values
+        }
+        [HttpPost]
+        public IActionResult DeleteAllTickets()
+        {
+            var openTickets = _context.Tickets.Where(t => t.EndDate == null).ToList(); // Select only tickets without EndDate
+            _context.Tickets.RemoveRange(openTickets);
             _context.SaveChanges();
-            return RedirectToAction("TicketManager"); // Redirect to TicketManager
+            return RedirectToAction("TicketManager"); // Adjust to your actual view
         }
 
-        _context.SaveChanges();
-        return RedirectToAction("TicketManagerEdit", new { id }); // Stay in TicketManagerEdit
-    }
-
-    return BadRequest("Invalid status provided"); // Handle invalid values
-}
+        [HttpPost]
+        public IActionResult MarkAllAsCompleted()
+        {
+            var allTickets = _context.Tickets.ToList();
+            foreach (var ticket in allTickets)
+            {
+                ticket.State = (TicketState)2; // Adjust this according to your actual status
+                ticket.EndDate = DateTime.Now;
+            }
+            _context.SaveChanges();
+            return RedirectToAction("TicketManager"); // Change this to your actual view
+        }
 
 
 
@@ -279,7 +298,19 @@ public IActionResult UpdateTicketStatus(long id, string newStatus)
             return RedirectToAction("FinishTicket"); // Redirect to the main page after deletion
         }
 
+        [HttpPost]
+        public IActionResult DeleteAllFinishTickets()
+        {
+            var completedTickets = _context.Tickets.Where(t => t.EndDate != null).ToList();
 
+            if (completedTickets.Any())
+            {
+                _context.Tickets.RemoveRange(completedTickets);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("FinishTicket"); // Redirect to the same page
+        }
 
             // Report
             public IActionResult Report()
