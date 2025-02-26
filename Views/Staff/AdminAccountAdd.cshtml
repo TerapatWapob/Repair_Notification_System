@@ -40,45 +40,34 @@
     <!-- Form -->
     <div class="adminadd-form">
       <form>
-        <!-- ชื่อ-นามสกุล -->
         <div class="mb-3">
           <label for="fullName" class="form-label">ชื่อ-นามสกุล</label>
           <input type="text" class="form-control" id="fullName" placeholder="กรอกชื่อ-นามสกุล">
         </div>
-        <!-- ตำแหน่ง -->
         <div class="mb-3">
           <label for="position" class="form-label">ตำแหน่ง</label>
           <input type="text" class="form-control" id="position" placeholder="กรอกตำแหน่ง">
         </div>
-        <!-- เบอร์โทรศัพท์ส่วนตัว -->
         <div class="mb-3">
           <label for="phone" class="form-label">เบอร์โทรศัพท์ส่วนตัว</label>
           <input type="tel" class="form-control" id="phone" placeholder="กรอกเบอร์โทรศัพท์">
         </div>
-        <!-- ชื่อบัญชี -->
         <div class="mb-3">
           <label for="username" class="form-label">ชื่อบัญชี</label>
           <input type="text" class="form-control" id="username" placeholder="กรอกชื่อบัญชี">
         </div>
-        <!-- รหัสผ่านเดิม -->
-        <div class="mb-3">
-          <label for="oldPassword" class="form-label">รหัสผ่านเดิม</label>
-          <input type="password" class="form-control" id="oldPassword" placeholder="กรอกรหัสผ่านเดิม">
-        </div>
-        <!-- รหัสผ่านใหม่ -->
         <div class="mb-3">
           <label for="newPassword" class="form-label">รหัสผ่านใหม่</label>
           <input type="password" class="form-control" id="newPassword" placeholder="กรอกรหัสผ่านใหม่">
         </div>
-        <!-- ยืนยันรหัสผ่านใหม่ -->
         <div class="mb-3">
           <label for="confirmPassword" class="form-label">ยืนยันรหัสผ่านใหม่</label>
           <input type="password" class="form-control" id="confirmPassword" placeholder="ยืนยันรหัสผ่านใหม่">
         </div>
-        <!-- Add Account Button -->
-        <div class="text-center mt-3">
-          <button type="button" class="btn btn-green">เพิ่มบัญชี</button>
-        </div>
+        <form method="post" action="@Url.Action("AddNewAdmin", "Staff")">
+            <!-- Fields here -->
+            <button type="submit" class="btn btn-green">เพิ่มบัญชี</button>
+        </form>
       </form>
     </div>
   </div>

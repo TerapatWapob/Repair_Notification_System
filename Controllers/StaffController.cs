@@ -34,10 +34,116 @@ namespace Repair_Notification_System.Controllers
             return View();
         }
 
-        public IActionResult AdminAccountEdit()
+        [HttpGet("Staff/AdminAccountEdit/{id}")]
+        public IActionResult AdminAccountEdit(int id)
         {
-            return View();
+            var user = _context.Users.FirstOrDefault(u => u.ID == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return View("AdminAccountEdit", user);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteAdmin(int id)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.ID == id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            _context.Users.Remove(user);
+            _context.SaveChanges();
+
+            return RedirectToAction("AdminAccountManager");
+        }
+
+
+
+
+
+
+
+
+
+
+        [HttpPost]
+        public IActionResult UpdateAdmin(User admin)
+        {
+            var existingAdmin = _context.Users.Find(admin.ID);
+            if (existingAdmin != null)
+            {
+                existingAdmin.Name = admin.Name;
+                existingAdmin.Position = admin.Position;
+                existingAdmin.PhoneNumber = admin.PhoneNumber;
+                existingAdmin.Username = admin.Username;
+                _context.SaveChanges();
+            }
+            return RedirectToAction("AdminAccountManager");
+        }
+        [HttpPost]
+        public IActionResult ResetAdminPassword(long ID)
+        {
+            var admin = _context.Users.Find(ID);
+            if (admin != null)
+            {
+                admin.Password = "12345678"; // Ideally, hash this password before saving
+                _context.SaveChanges();
+            }
+            return RedirectToAction("AdminAccountManager");
+        }
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        [HttpGet]
+        public IActionResult AddAdmin()
+        {
+            return View("");
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         public IActionResult Profile()
         {
@@ -77,7 +183,6 @@ namespace Repair_Notification_System.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception (you can replace this with a proper logger)
                 Console.Error.WriteLine(ex.Message);
                 return StatusCode(500, "Internal server error.");
             }
@@ -100,7 +205,6 @@ namespace Repair_Notification_System.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception (you can replace this with a proper logger)
                 Console.Error.WriteLine(ex.Message);
                 return StatusCode(500, "Internal server error.");
             }
@@ -207,49 +311,11 @@ namespace Repair_Notification_System.Controllers
             _context.SaveChanges();
             return RedirectToAction("TicketManager"); // Change this to your actual view
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         public IActionResult FinishTicket()
         {
             var finishedTickets = _context.Tickets.Where(t => t.State == TicketState.ดำเนินการเสร็จสิ้น).ToList();
             return View(finishedTickets);
         }
-
         
         public IActionResult FinishTicketDetail(long id)
         {

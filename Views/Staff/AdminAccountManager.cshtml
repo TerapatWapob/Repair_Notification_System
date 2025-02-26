@@ -53,7 +53,7 @@
         <div class="col">ชื่อผู้ใช้งาน</div>
         <div class="col">เบอร์โทรศัพท์</div>
         <div class="col">ตำแหน่ง</div>
-        <div class="col-2 d-flex justify-content-center align-items-center"></div>
+        <div class="col-1 d-flex justify-content-center align-items-center"></div>
         <div class="col-1 d-flex justify-content-center align-items-center"></div>
     </div>
 
@@ -67,11 +67,27 @@
           <div class="col">@User.Username</div>
           <div class="col">@User.PhoneNumber</div>
           <div class="col">@User.Position</div>
-          <div class="col-2 d-flex justify-content-center align-items-center"><a href="" class="btn btn-info">รายละเอียด</a></div>
-          <div class="col-1 d-flex justify-content-center align-items-center"><a href="" class="btn btn-danger">ลบบัญชี</a></div>
+          <div class="col-1 d-flex justify-content-center align-items-center">
+            <a asp-controller="Staff" asp-action="AdminAccountEdit" asp-route-id="@User.ID" class="btn btn-info">แก้ไข</a>
+          </div>
+          <div class="col-1 d-flex justify-content-center align-items-center">
+              <form asp-controller="Staff" asp-action="DeleteAdmin" asp-route-id="@User.ID" method="post" onsubmit="return confirmDelete()">
+                  @Html.AntiForgeryToken()
+                  <button type="submit" class="btn btn-danger">ลบบัญชี</button>
+              </form>
+          </div>
         index++;
         }
       }
+    <p></p>
+    <div class="text-end mb-3">
+        <a asp-controller="Staff" asp-action="AdminAccountAdd" class="btn btn-success">เพิ่มบัญชีใหม่</a>
+    </div>
     </div>
 </div>
 
+<script>
+    function confirmDelete() {
+        return confirm("คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีนี้?\nโปรดทราบว่าการกระทำนี้ไม่สามารถย้อนกลับได้");
+    }
+</script>

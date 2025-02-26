@@ -1,6 +1,7 @@
 ﻿@{
-    Layout = "_StaffLayout"; // Specify a custom layout
+    Layout = "_StaffLayout"; // Use the staff layout
 }
+
 <style>
   .adminedit-header {
     background-color: #007BFF; /* Blue background */
@@ -30,77 +31,76 @@
     background-color: #218838;
     color: white;
   }
-    .btn-red {
-    background-color: #e71616; /* Green button */
+  .btn-red {
+    background-color: #e71616;
     color: white;
     border: 2px solid white;
     border-radius: 5px;
   }
   .btn-red:hover {
-    background-color: #e71616;
+    background-color: #c00d0d;
     color: white;
   }
-    .btn-blue {
-    background-color: #2b18d3; /* Green button */
+  .btn-blue {
+    background-color: #2b18d3;
     color: white;
     border: 2px solid white;
     border-radius: 5px;
   }
   .btn-blue:hover {
-    background-color: #2b18d3;
+    background-color: #1a0ea0;
     color: white;
   }
 </style>
-    
-  <div class="form-container">
+
+<div class="form-container">
     <!-- Header -->
     <div class="adminedit-header">
-      <h3>ระบบจัดการบัญชี Admin (แก้ไขบัญชี)</h3>
+        <h3>ระบบจัดการบัญชี Admin (แก้ไขบัญชี)</h3>
     </div>
+
     <!-- Form -->
     <div class="adminedit-form">
-      <form>
-        <!-- ชื่อ-นามสกุล -->
-        <div class="mb-3">
-          <label for="fullName" class="form-label">ชื่อ-นามสกุล</label>
-          <input type="text" class="form-control" id="fullName" placeholder="กรอกชื่อ-นามสกุล">
+        <form method="post" action="@Url.Action("UpdateAdmin", "Staff")" onsubmit="return confirmEdit();">
+            <input type="hidden" name="ID" value="@Model.ID" />
+
+            <div class="mb-3">
+                <label for="fullName" class="form-label">ชื่อ-นามสกุล</label>
+                <input type="text" class="form-control" id="fullName" name="Name" value="@Model.Name">
+            </div>
+            <div class="mb-3">
+                <label for="position" class="form-label">ตำแหน่ง</label>
+                <input type="text" class="form-control" id="position" name="Position" value="@Model.Position">
+            </div>
+            <div class="mb-3">
+                <label for="phone" class="form-label">เบอร์โทรศัพท์ส่วนตัว</label>
+                <input type="tel" class="form-control" id="phone" name="PhoneNumber" value="@Model.PhoneNumber" maxlength="13" oninput="this.value = this.value.replace(/[^0-9+\-*\/]/g, '').slice(0,13)">
+
+            </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">ชื่อบัญชี</label>
+                <input type="text" class="form-control" id="username" name="Username" value="@Model.Username">
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-3">
+                <button type="submit" class="btn btn-green">บันทึกการแก้ไข</button>
+            </div>
+        </form>
+        <div class="text-end">
+        <form method="post" action="@Url.Action("ResetAdminPassword", "Staff")" onsubmit="return confirmReset();">
+          <input type="hidden" name="ID" value="@Model.ID" />
+          <button type="submit" class="btn btn-red">รีเซ็ตรหัสผ่าน</button>
+        </form>
+        <form method="get" action="@Url.Action("AdminAccountManager", "Staff")">
+             <button type="submit" class="btn btn-blue">ย้อนกลับ</button>
+        </form>
         </div>
-        <!-- ตำแหน่ง -->
-        <div class="mb-3">
-          <label for="position" class="form-label">ตำแหน่ง</label>
-          <input type="text" class="form-control" id="position" placeholder="กรอกตำแหน่ง">
-        </div>
-        <!-- เบอร์โทรศัพท์ส่วนตัว -->
-        <div class="mb-3">
-          <label for="phone" class="form-label">เบอร์โทรศัพท์ส่วนตัว</label>
-          <input type="tel" class="form-control" id="phone" placeholder="กรอกเบอร์โทรศัพท์">
-        </div>
-        <!-- ชื่อบัญชี -->
-        <div class="mb-3">
-          <label for="username" class="form-label">ชื่อบัญชี</label>
-          <input type="text" class="form-control" id="username" placeholder="กรอกชื่อบัญชี">
-        </div>
-        <!-- รหัสผ่านเดิม -->
-        <div class="mb-3">
-          <label for="oldPassword" class="form-label">รหัสผ่านเดิม</label>
-          <input type="password" class="form-control" id="oldPassword" placeholder="กรอกรหัสผ่านเดิม">
-        </div>
-        <!-- รหัสผ่านใหม่ -->
-        <div class="mb-3">
-          <label for="newPassword" class="form-label">รหัสผ่านใหม่</label>
-          <input type="password" class="form-control" id="newPassword" placeholder="กรอกรหัสผ่านใหม่">
-        </div>
-        <!-- ยืนยันรหัสผ่านใหม่ -->
-        <div class="mb-3">
-          <label for="confirmPassword" class="form-label">ยืนยันรหัสผ่านใหม่</label>
-          <input type="password" class="form-control" id="confirmPassword" placeholder="ยืนยันรหัสผ่านใหม่">
-        </div>
-        <!-- Add Account Button -->
-        <div class="text-center mt-3">
-          <button type="button" class="btn btn-blue">รีเซ็ตรหัสผ่าน</button>
-          <button type="button" class="btn btn-green">แก้ไขข้อมูล</button>
-          <button type="button" class="btn btn-red">ลบบัญชี</button>
-        </div>
-      </form>
     </div>
-  </div>
+</div>
+<script>
+    function confirmEdit() {
+        return confirm("โปรดยืนยันการบันทึกข้อมูล");
+    }
+    function confirmReset() {
+        return confirm("คุณแน่ใจหรือไม่ที่ต้องการรีเซ็ตรหัสผ่าน? รหัสผ่านใหม่จะเป็น '12345678'");
+    }
+</script>
