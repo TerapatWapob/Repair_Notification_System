@@ -1,17 +1,20 @@
 ﻿@{
-    Layout = "_StaffLayout"; // Specify a custom layout
+    Layout = "_StaffLayout"; // Use your staff layout
 }
+
+@model RPS_DB.Models.User
+
 <style>
   .adminadd-header {
-    background-color: #007BFF; /* Blue background */
+    background-color: #007BFF;
     color: white;
     padding: 10px;
     text-align: center;
     border-radius: 10px 10px 0 0;
-    text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black; /* Black stroke */
+    text-shadow: -2px -2px 0 black, 2px -2px 0 black, -2px 2px 0 black, 2px 2px 0 black;
   }
   .adminadd-form {
-    background-color: #f0f8ff; /* Light blue */
+    background-color: #f0f8ff;
     padding: 20px;
     border-radius: 0 0 10px 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -21,7 +24,7 @@
     margin: 50px auto;
   }
   .btn-green {
-    background-color: #28a745; /* Green button */
+    background-color: #28a745;
     color: white;
     border: 2px solid white;
     border-radius: 5px;
@@ -30,55 +33,68 @@
     background-color: #218838;
     color: white;
   }
+  .error-message {
+    color: red;
+    text-align: center;
+  }
+  .success-message {
+    color: green;
+    text-align: center;
+  }
 </style>
-    
-  <div class="form-container">
-    <!-- Header -->
+
+<div class="form-container">
     <div class="adminadd-header">
-      <h3>โปรไฟล์และการจัดการบัญชี</h3>
+        <h3>โปรไฟล์และการจัดการบัญชี</h3>
     </div>
-    <!-- Form -->
+
     <div class="adminadd-form">
-      <form>
-        <!-- ชื่อ-นามสกุล -->
-        <div class="mb-3">
-          <label for="fullName" class="form-label">ชื่อ-นามสกุล</label>
-          <input type="text" class="form-control" id="fullName" placeholder="กรอกชื่อ-นามสกุล">
-        </div>
-        <!-- ตำแหน่ง -->
-        <div class="mb-3">
-          <label for="position" class="form-label">ตำแหน่ง</label>
-          <input type="text" class="form-control" id="position" placeholder="กรอกตำแหน่ง">
-        </div>
-        <!-- เบอร์โทรศัพท์ส่วนตัว -->
-        <div class="mb-3">
-          <label for="phone" class="form-label">เบอร์โทรศัพท์ส่วนตัว</label>
-          <input type="tel" class="form-control" id="phone" placeholder="กรอกเบอร์โทรศัพท์">
-        </div>
-        <!-- ชื่อบัญชี -->
-        <div class="mb-3">
-          <label for="username" class="form-label">ชื่อบัญชี</label>
-          <input type="text" class="form-control" id="username" placeholder="กรอกชื่อบัญชี">
-        </div>
-        <!-- รหัสผ่านเดิม -->
-        <div class="mb-3">
-          <label for="oldPassword" class="form-label">รหัสผ่านเดิม</label>
-          <input type="password" class="form-control" id="oldPassword" placeholder="กรอกรหัสผ่านเดิม">
-        </div>
-        <!-- รหัสผ่านใหม่ -->
-        <div class="mb-3">
-          <label for="newPassword" class="form-label">รหัสผ่านใหม่</label>
-          <input type="password" class="form-control" id="newPassword" placeholder="กรอกรหัสผ่านใหม่">
-        </div>
-        <!-- ยืนยันรหัสผ่านใหม่ -->
-        <div class="mb-3">
-          <label for="confirmPassword" class="form-label">ยืนยันรหัสผ่านใหม่</label>
-          <input type="password" class="form-control" id="confirmPassword" placeholder="ยืนยันรหัสผ่านใหม่">
-        </div>
-        <!-- Add Account Button -->
-        <div class="text-center mt-3">
-          <button type="button" class="btn btn-green">แก้ไขข้อมูล</button>
-        </div>
-      </form>
+        @if (ViewBag.Error != null)
+        {
+            <p class="error-message">@ViewBag.Error</p>
+        }
+        @if (ViewBag.Success != null)
+        {
+            <p class="success-message">@ViewBag.Success</p>
+        }
+
+        <form method="post" asp-action="UpdateProfile" asp-controller="Staff">
+          @Html.AntiForgeryToken()
+            <input type="hidden" name="username" value="@Model.Username" />
+
+            <div class="mb-3">
+                <label class="form-label">ชื่อ-นามสกุล</label>
+                <input type="text" class="form-control" name="fullName" value="@Model.Name" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">ตำแหน่ง</label>
+                <input type="text" class="form-control" name="position" value="@Model.Position" disabled>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">เบอร์โทรศัพท์ส่วนตัว</label>
+                <input type="tel" class="form-control" name="phone" value="@Model.PhoneNumber">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">รหัสผ่านเดิม</label>
+                <input type="password" class="form-control" name="oldPassword">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">รหัสผ่านใหม่</label>
+                <input type="password" class="form-control" name="newPassword">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">ยืนยันรหัสผ่านใหม่</label>
+                <input type="password" class="form-control" name="confirmPassword">
+            </div>
+
+            <div class="text-center mt-3">
+                <button type="submit" class="btn btn-green">แก้ไขข้อมูล</button>
+            </div>
+        </form>
     </div>
-  </div>
+</div>

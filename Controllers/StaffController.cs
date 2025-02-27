@@ -4,9 +4,14 @@ using Repair_Notification_System.Models;
 using RPS_DB.Models;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 namespace Repair_Notification_System.Controllers
 {
+    [Authorize]
     public class StaffController : Controller
     {
         private readonly ILogger<StaffController> _logger;
@@ -18,22 +23,74 @@ namespace Repair_Notification_System.Controllers
             _context = context; // Now your database is ready to use later
         }
 
+        [AllowAnonymous]
         public IActionResult Index()
         {
+            var userRole = HttpContext.Session.GetString("UserRole");
+
+            if (!string.IsNullOrEmpty(userRole))
+            {
+                return RedirectToAction("TicketManager"); // Redirect if already logged in
+            }
+
             return View();
         }
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login(string username, string password)
+        {
+            // Load users into memory first
+            var users = _context.Users.ToList(); 
 
+            // Now filter in memory (EF Core does not support StringComparison.Ordinal)
+            var user = users.FirstOrDefault(u => 
+                u.Username == username && u.Password == password);
+
+            if (user != null)
+            {
+                string userRoleString = user.UserRole.ToString(); // Convert enum to string
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.ID.ToString()), 
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, userRoleString) 
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties { IsPersistent = true };
+
+                await HttpContext.SignInAsync(
+                    CookieAuthenticationDefaults.AuthenticationScheme,
+                    new ClaimsPrincipal(claimsIdentity),
+                    authProperties
+                );
+
+                return RedirectToAction("TicketManager"); 
+            }
+
+            ViewBag.Error = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
+            return View("Index"); 
+        }
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index");
+        }
+
+        [Authorize(Roles = "SystemAdmin")]
         public IActionResult AdminAccountManager()
         {
             var AdminAccountManager = _context.Users.Where(user=>user.UserRole == UserRole.Admin).ToList();
             return View(AdminAccountManager);
         }
-
+        [Authorize(Roles = "SystemAdmin")]
         public IActionResult AdminAccountAdd()
         {
             return View();
         }
-
+        [Authorize(Roles = "SystemAdmin")]
         [HttpGet("Staff/AdminAccountEdit/{id}")]
         public IActionResult AdminAccountEdit(int id)
         {
@@ -44,7 +101,7 @@ namespace Repair_Notification_System.Controllers
             }
             return View("AdminAccountEdit", user);
         }
-
+        [Authorize(Roles = "SystemAdmin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteAdmin(int id)
@@ -60,7 +117,7 @@ namespace Repair_Notification_System.Controllers
 
             return RedirectToAction("AdminAccountManager");
         }
-
+        [Authorize(Roles = "SystemAdmin")]
         [HttpPost]
         public IActionResult UpdateAdmin(User admin)
         {
@@ -75,6 +132,7 @@ namespace Repair_Notification_System.Controllers
             }
             return RedirectToAction("AdminAccountManager");
         }
+        [Authorize(Roles = "SystemAdmin")]
         [HttpPost]
         public IActionResult ResetAdminPassword(long ID)
         {
@@ -86,32 +144,29 @@ namespace Repair_Notification_System.Controllers
             }
             return RedirectToAction("AdminAccountManager");
         }
-        
+        [Authorize(Roles = "SystemAdmin")]
         [HttpGet]
         public JsonResult CheckUsernameAvailability(string username)
         {
             bool isAvailable = !_context.Users.Any(u => u.Username == username);
             return Json(new { available = isAvailable });
         }
-
+        [Authorize(Roles = "SystemAdmin")]
         [HttpPost]
         public IActionResult AddAdminAccount(User model)
         {
-            // 1️⃣ Validate the model first
             if (!ModelState.IsValid)
             {
                 TempData["ErrorMessage"] = "ข้อมูลไม่ถูกต้อง โปรดตรวจสอบอีกครั้ง";
                 return RedirectToAction("AdminAccountAdd");
             }
 
-            // 2️⃣ Check if username already exists
             if (_context.Users.Any(u => u.Username == model.Username))
             {
                 TempData["ErrorMessage"] = "ชื่อบัญชีนี้ถูกใช้แล้ว";
                 return RedirectToAction("AdminAccountAdd");
             }
 
-            // 3️⃣ Create new user
             var newAdmin = new User
             {
                 Name = model.Name,
@@ -136,18 +191,121 @@ namespace Repair_Notification_System.Controllers
                 return RedirectToAction("AdminAccountAdd");
             }
         }
+
         public IActionResult Profile()
         {
-            return View();
+            if (!User.Identity.IsAuthenticated)
+            {
+                return RedirectToAction("Index"); // Redirect to login if not authenticated
+            }
+
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return RedirectToAction("Index");
+            }
+
+            var user = _context.Users.FirstOrDefault(u => u.ID.ToString() == userId);
+
+            if (user == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            return View(user);
+        }
+    // POST: Update Profile
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult UpdateProfile(string fullName, string position, string phone, string oldPassword, string newPassword, string confirmPassword)
+    {
+        if (!User.Identity.IsAuthenticated)
+        {
+            return RedirectToAction("Index"); // Redirect to login if not authenticated
         }
 
-        // Agency Manager View
+        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userId))
+        {
+            return RedirectToAction("Index");
+        }
+
+        var user = _context.Users.FirstOrDefault(u => u.ID.ToString() == userId);
+
+        if (user == null)
+        {
+            return RedirectToAction("Index");
+        }
+
+        bool isUpdated = false; // Flag to track changes
+
+        // Update user details only if they are different
+        if (!string.IsNullOrWhiteSpace(fullName) && user.Name != fullName)
+        {
+            user.Name = fullName;
+            isUpdated = true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(phone) && user.PhoneNumber != phone)
+        {
+            user.PhoneNumber = phone;
+            isUpdated = true;
+        }
+
+        if (!string.IsNullOrWhiteSpace(position) && user.Position != position)
+        {
+            user.Position = position;
+            isUpdated = true;
+        }
+
+        // Password Change Logic
+        if (!string.IsNullOrEmpty(oldPassword) && !string.IsNullOrEmpty(newPassword))
+        {
+            if (user.Password != oldPassword)
+            {
+                ViewBag.Error = "รหัสผ่านเดิมไม่ถูกต้อง";
+                return View("Profile", user);
+            }
+
+            if (newPassword.Length < 8)
+            {
+                ViewBag.Error = "รหัสผ่านใหม่ต้องมีอย่างน้อย 8 ตัวอักษร";
+                return View("Profile", user);
+            }
+
+            if (newPassword != confirmPassword)
+            {
+                ViewBag.Error = "รหัสผ่านใหม่ไม่ตรงกัน";
+                return View("Profile", user);
+            }
+
+            if (user.Password != newPassword) // Only update if it's actually different
+            {
+                user.Password = newPassword;
+                isUpdated = true;
+            }
+        }
+
+        // Save only if something changed
+        if (isUpdated)
+        {
+            _context.SaveChanges();
+            ViewBag.Success = "อัปเดตข้อมูลสำเร็จ";
+        }
+        else
+        {
+            ViewBag.Error = "ไม่มีการเปลี่ยนแปลงข้อมูล"; // Show message if nothing changed
+        }
+
+        return View("Profile", user);
+    }
+
+
         public IActionResult AgencyManager()
         {
-            // Retrieve all agencies from the database
             var agencies = _context.Agencies.ToList();
-
-            // Pass the list to the view
             return View(agencies);
         }
 

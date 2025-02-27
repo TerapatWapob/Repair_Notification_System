@@ -31,21 +31,22 @@
     </div>
     <!-- Form -->
     <div class="login-form">
-      <form>
-        <!-- ชื่อบัญชี -->
-        <div class="mb-3">
-          <label for="username" class="form-label">ชื่อบัญชี</label>
-          <input type="text" class="form-control" id="username" placeholder="กรอกชื่อบัญชี">
-        </div>
-        <!-- รหัสผ่าน -->
-        <div class="mb-3">
-          <label for="password" class="form-label">รหัสผ่าน</label>
-          <input type="password" class="form-control" id="password" placeholder="กรอกรหัสผ่าน">
-        </div>
-        <!-- Submit Button -->
-        <div class="text-center">
-          <button type="submit" class="btn btn-primary">เข้าสู่ระบบ</button>
-        </div>
+      <form method="post" asp-controller="Staff" asp-action="Login">
+          <div class="mb-3">
+              <label for="username" class="form-label">ชื่อบัญชี</label>
+              <input type="text" class="form-control" id="username" name="username" placeholder="กรอกชื่อบัญชี" required>
+          </div>
+          <div class="mb-3">
+              <label for="password" class="form-label">รหัสผ่าน</label>
+              <input type="password" class="form-control" id="password" name="password" placeholder="กรอกรหัสผ่าน" required>
+          </div>
+          <div class="text-center">
+              <button type="submit" class="btn btn-primary">เข้าสู่ระบบ</button>
+          </div>
       </form>
+      @if (!string.IsNullOrEmpty(ViewBag.Error))
+      {
+          <div class="alert alert-danger mt-2">@ViewBag.Error</div>
+      }
     </div>
   </div>

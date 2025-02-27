@@ -58,8 +58,6 @@ namespace Repair_Notification_System.Controllers
         return View();
     }
 
-
-
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult RepairSubmit(Ticket ticket)
@@ -126,6 +124,12 @@ namespace Repair_Notification_System.Controllers
         {
             return View();
         }
+
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
