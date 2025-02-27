@@ -61,15 +61,6 @@ namespace Repair_Notification_System.Controllers
             return RedirectToAction("AdminAccountManager");
         }
 
-
-
-
-
-
-
-
-
-
         [HttpPost]
         public IActionResult UpdateAdmin(User admin)
         {
@@ -96,55 +87,55 @@ namespace Repair_Notification_System.Controllers
             return RedirectToAction("AdminAccountManager");
         }
         
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         [HttpGet]
-        public IActionResult AddAdmin()
+        public JsonResult CheckUsernameAvailability(string username)
         {
-            return View("");
+            bool isAvailable = !_context.Users.Any(u => u.Username == username);
+            return Json(new { available = isAvailable });
         }
 
+        [HttpPost]
+        public IActionResult AddAdminAccount(User model)
+        {
+            // 1️⃣ Validate the model first
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "ข้อมูลไม่ถูกต้อง โปรดตรวจสอบอีกครั้ง";
+                return RedirectToAction("AdminAccountAdd");
+            }
 
+            // 2️⃣ Check if username already exists
+            if (_context.Users.Any(u => u.Username == model.Username))
+            {
+                TempData["ErrorMessage"] = "ชื่อบัญชีนี้ถูกใช้แล้ว";
+                return RedirectToAction("AdminAccountAdd");
+            }
 
+            // 3️⃣ Create new user
+            var newAdmin = new User
+            {
+                Name = model.Name,
+                Position = model.Position,
+                PhoneNumber = model.PhoneNumber,
+                Username = model.Username,
+                Password = model.Password, // ⚠️ Hash the password if needed
+                UserRole = UserRole.Admin  // Default role to Admin
+            };
 
+            _context.Users.Add(newAdmin);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            try
+            {
+                _context.SaveChanges();
+                TempData["SuccessMessage"] = "เพิ่มบัญชีสำเร็จ!";
+                return RedirectToAction("AdminAccountManager");
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "เกิดข้อผิดพลาด: " + ex.Message;
+                return RedirectToAction("AdminAccountAdd");
+            }
+        }
         public IActionResult Profile()
         {
             return View();

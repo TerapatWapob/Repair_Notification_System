@@ -1,92 +1,98 @@
-﻿
-@{
+﻿@{
     Layout = "_StaffLayout"; // Specify a custom layout
 }
 
-  <style>
+<style>
     .header {
-      background-color: #007BFF; /* Blue background */
-      color: white;
-      text-align: center;
-      padding: 15px;
-      border-radius: 10px 10px 0 0;
-      text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; /* Black stroke */
-      font-size: 1.5rem; /* Larger font size for header */
-      width: 100%; /* Ensure header width matches subheader and content */
+        background-color: #007BFF; /* Blue background */
+        color: white;
+        text-align: center;
+        padding: 15px;
+        border-radius: 10px 10px 0 0;
+        text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black; /* Black stroke */
+        font-size: 1.5rem; /* Larger font size for header */
+        width: 100%; /* Ensure header width matches subheader and content */
     }
+
     .subheader {
-      background-color: #f0f8ff; /* Light blue background */
-      padding: 10px 10px;
-      font-weight: bold;
-      font-size: 1rem; /* Smaller font size than header */
+        background-color: #f0f8ff; /* Light blue background */
+        padding: 10px 10px;
+        font-weight: bold;
+        font-size: 1rem; /* Smaller font size than header */
     }
+
     .content {
-      background-color: white;
-      padding: 10px 10px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      width: 100%; /* Ensures content width matches header */
+        background-color: white;
+        padding: 10px 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        width: 100%; /* Ensures content width matches header */
     }
+
     .content .row {
-      padding: 5px 0; /* Increase top and bottom padding */
-      align-items: center; /* Keep content vertically centered */
-}
-    .content .col {
-      padding: 5px;
-      text-align: center;
+        padding: 5px 0; /* Increase top and bottom padding */
+        align-items: center; /* Keep content vertically centered */
+        border-bottom: 1px solid #ddd; /* Add a separator between rows */
     }
-  </style>
 
-    <br>
-    <br>
+    .content .col {
+        padding: 5px;
+        text-align: center;
+    }
+</style>
+
+<br>
+<br>
 @{
-    int index = 1;  
-    var today = DateTime.Today;
+    int index = 1;
 }
 
-<div class="container row mt-5">
-    <div class="header row">
+<div class="container mt-5">
+    <div class="header">
         <h2>ระบบจัดการบัญชี Admin</h2>
     </div>
+
     <div class="subheader row text-center">
         <div class="col">บัญชีที่</div>
         <div class="col">เจ้าของบัญชี</div>
         <div class="col">ชื่อผู้ใช้งาน</div>
         <div class="col">เบอร์โทรศัพท์</div>
         <div class="col">ตำแหน่ง</div>
-        <div class="col-1 d-flex justify-content-center align-items-center"></div>
-        <div class="col-1 d-flex justify-content-center align-items-center"></div>
+        <div class="col-1">แก้ไข</div>
+        <div class="col-1">ลบ</div>
     </div>
 
-    <div class="content row">
-      @foreach (var User in Model)
-      {
-        if (User.UserRole != null)
+    <div class="content">
+        @foreach (var User in Model)
         {
-          <div class="col">@index</div>
-          <div class="col">@User.Name</div>
-          <div class="col">@User.Username</div>
-          <div class="col">@User.PhoneNumber</div>
-          <div class="col">@User.Position</div>
-          <div class="col-1 d-flex justify-content-center align-items-center">
-            <a asp-controller="Staff" asp-action="AdminAccountEdit" asp-route-id="@User.ID" class="btn btn-info">แก้ไข</a>
-          </div>
-          <div class="col-1 d-flex justify-content-center align-items-center">
-              <form asp-controller="Staff" asp-action="DeleteAdmin" asp-route-id="@User.ID" method="post" onsubmit="return confirmDelete()">
-                  @Html.AntiForgeryToken()
-                  <button type="submit" class="btn btn-danger">ลบบัญชี</button>
-              </form>
-          </div>
-        index++;
+            if (User.UserRole != null)
+            {
+                <div class="row text-center"> <!-- Ensure each user gets a separate row -->
+                    <div class="col">@index</div>
+                    <div class="col">@User.Name</div>
+                    <div class="col">@User.Username</div>
+                    <div class="col">@User.PhoneNumber</div>
+                    <div class="col">@User.Position</div>
+                    <div class="col-1 d-flex justify-content-center align-items-center">
+                        <a asp-controller="Staff" asp-action="AdminAccountEdit" asp-route-id="@User.ID" class="btn btn-info">แก้ไข</a>
+                    </div>
+                    <div class="col-1 d-flex justify-content-center align-items-center">
+                        <form asp-controller="Staff" asp-action="DeleteAdmin" asp-route-id="@User.ID" method="post" onsubmit="return confirmDelete()">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger">ลบบัญชี</button>
+                        </form>
+                    </div>
+                </div>
+                index++;
+            }
         }
-      }
-    <p></p>
-    <div class="text-end mb-3">
-        <a asp-controller="Staff" asp-action="AdminAccountAdd" class="btn btn-success">เพิ่มบัญชีใหม่</a>
-    </div>
+
+        <div class="text-end mt-3">
+            <a asp-controller="Staff" asp-action="AdminAccountAdd" class="btn btn-success">เพิ่มบัญชีใหม่</a>
+        </div>
     </div>
 </div>
 
-<script>
+  <script>
     function confirmDelete() {
         return confirm("คุณแน่ใจหรือไม่ว่าต้องการลบบัญชีนี้?\nโปรดทราบว่าการกระทำนี้ไม่สามารถย้อนกลับได้");
     }
