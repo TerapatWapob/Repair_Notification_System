@@ -280,7 +280,7 @@ namespace Repair_Notification_System
                     Position = "System Administrator",
                     PhoneNumber = "0000000000",
                     Username = "SystemAdmin",
-                    Password = "SystemAdmin", // NOTE: Hash this in production!
+                    Password = "399e93cb2b3f1d89dca97a9e1dc57b3688bab7352a4133f0305eec2996e03d78", // NOTE: Hash this in production!
                     UserRole = UserRole.SystemAdmin
                 },
                 new User
@@ -290,7 +290,7 @@ namespace Repair_Notification_System
                     Position = "Administrator",
                     PhoneNumber = "0000000000",
                     Username = "Admin",
-                    Password = "Admin", // NOTE: Hash this in production!
+                    Password = "c1c224b03cd9bc7b6a86d77f5dace40191766c485cd55dc48caf9ac873335d6f", // NOTE: Hash this in production!
                     UserRole = UserRole.Admin
                 }
             );
@@ -306,7 +306,7 @@ namespace Repair_Notification_System
                     StartDate = new DateTime(2025, 1, 15),
                     EndDate = null,
                     Topic = "Login Issue",
-                    TypeOfProblem = "Authentication",
+                    TypeOfProblem = "ปัญหาเกี่ยวกับฮาร์ดแวร์/อุปกรณ์",
                     ProblemDescription = "Unable to log into the system.",
                     State = TicketState.รับเรื่องร้องเรียน,
                     AgencyID = 1
@@ -320,7 +320,7 @@ namespace Repair_Notification_System
                     StartDate = new DateTime(2025, 2, 10),
                     EndDate = null,
                     Topic = "System Crash",
-                    TypeOfProblem = "Technical",
+                    TypeOfProblem = "ปัญหาเกี่ยวกับฮาร์ดแวร์/อุปกรณ์",
                     ProblemDescription = "System crashes when opening the dashboard.",
                     State = TicketState.อยู่ระหว่างดำเนินการ,
                     AgencyID = 2
@@ -334,7 +334,7 @@ namespace Repair_Notification_System
                     StartDate = new DateTime(2025, 1, 9),
                     EndDate = new DateTime(2025, 1, 12),
                     Topic = "System Crash",
-                    TypeOfProblem = "Technical",
+                    TypeOfProblem = "ปัญหาเกี่ยวกับซอฟต์แวร์",
                     ProblemDescription = "System crashes when opening the dashboard.",
                     State = TicketState.ดำเนินการเสร็จสิ้น,
                     AgencyID = 2
@@ -348,7 +348,21 @@ namespace Repair_Notification_System
                     StartDate = new DateTime(2025, 2, 15),
                     EndDate = new DateTime(2025, 2, 18),
                     Topic = "System Crash",
-                    TypeOfProblem = "Technical",
+                    TypeOfProblem = "ปัญหาด้านเครือข่าย",
+                    ProblemDescription = "System crashes when opening the dashboard.",
+                    State = TicketState.ดำเนินการเสร็จสิ้น,
+                    AgencyID = 2
+                },
+                new Ticket
+                {
+                    ID = 5,
+                    Name = "Luthor Sama",
+                    Email = "Luthor@example.com",
+                    PhoneNumber = "0892835021",
+                    StartDate = new DateTime(2025, 2, 25),
+                    EndDate = new DateTime(2025, 2, 27),
+                    Topic = "System Crash",
+                    TypeOfProblem = "อื่นๆ",
                     ProblemDescription = "System crashes when opening the dashboard.",
                     State = TicketState.ดำเนินการเสร็จสิ้น,
                     AgencyID = 2

@@ -1,10 +1,156 @@
-﻿@{
-    ViewData["Title"] = "Report";
-}
+﻿@using System.Text.Json
 @{
-    Layout = "_StaffLayout"; // Specify a custom layout
-}
+    ViewData["Title"] = "Report";
+    Layout = "_StaffLayout"; 
 
-<div class="text-center">
-    <h1 class="display-4">Report</h1>
+    // Convert ViewBag data to strongly-typed lists
+    var typeOfProblemData = ViewBag.TypeOfProblemData as List<dynamic> ?? new List<dynamic>();
+    var ticketStateData = ViewBag.TicketStateData as List<dynamic> ?? new List<dynamic>();
+    var agencyData = ViewBag.AgencyData as List<dynamic> ?? new List<dynamic>();
+
+    // Convert to JSON (Safe for JavaScript)
+    var typeOfProblemJson = JsonSerializer.Serialize(typeOfProblemData);
+    var ticketStateJson = JsonSerializer.Serialize(ticketStateData);
+    var agencyJson = JsonSerializer.Serialize(agencyData);
+}
+<div class="container">
+    <h1 class="text-center">📊 Report</h1>
+    <h4 class="text-center">(ผลการดำเนินงานใน 365 วันที่ผ่านมา)</h4>
+    <div class="row">
+        <!-- TypeOfProblem Pie Chart -->
+        <div class="col-md-6">
+            <canvas id="typeOfProblemChart"></canvas>
+        </div>
+
+        <!-- TicketState Pie Chart -->
+        <div class="col-md-6">
+            <canvas id="ticketStateChart"></canvas>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <!-- Top 10 Agencies Bar Chart -->
+        <div class="col-md-12">
+            <canvas id="agencyChart"></canvas>
+        </div>
+    </div>
 </div>
+
+<!-- Chart.js Script -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Parse JSON properly (handles Thai text)
+        var typeOfProblemData = JSON.parse('@Html.Raw(JsonSerializer.Serialize(ViewBag.TypeOfProblemData ?? new List<dynamic>()))');
+        var ticketStateData = JSON.parse('@Html.Raw(JsonSerializer.Serialize(ViewBag.TicketStateData ?? new List<dynamic>()))');
+        var agencyData = JSON.parse('@Html.Raw(JsonSerializer.Serialize(ViewBag.AgencyData ?? new List<dynamic>()))');
+
+        console.log("✅ Parsed TypeOfProblemData:", typeOfProblemData);
+        console.log("✅ Parsed TicketStateData:", ticketStateData);
+        console.log("✅ Parsed AgencyData:", agencyData);
+
+        // Ensure categories always exist (Set to 0 if missing)
+        const typeCategories = [
+            { name: "ปัญหาเกี่ยวกับซอฟต์แวร์", color: "#36A2EB" },  // Blue
+            { name: "ปัญหาเกี่ยวกับฮาร์ดแวร์/อุปกรณ์", color: "#FF6384" }, // Red
+            { name: "ปัญหาด้านเครือข่าย", color: "#FFCE56" }, // Yellow
+            { name: "อื่นๆ", color: "#9E9E9E" } // Gray
+        ];
+        const ticketStates = [
+            { name: "รับเรื่องร้องเรียน", color: "#1D87EA" },  // Light Blue
+            { name: "อยู่ระหว่างดำเนินการ", color: "#FFCE56" },  // Yellow
+            { name: "ดำเนินการเสร็จสิ้น", color: "#28CC34" } // Green
+        ];
+
+        // Convert data to dictionary for lookup
+        const typeDict = Object.fromEntries(typeOfProblemData.map(x => [x.Type.toLowerCase(), x.Count]));
+        const ticketStateDict = Object.fromEntries(ticketStateData.map(x => [x.State.toLowerCase(), x.Count]));
+
+        // Construct datasets (ensures all labels exist)
+        let typeLabels = typeCategories.map(t => t.name);
+        let typeData = typeCategories.map(t => typeDict[t.name.toLowerCase()] || 0);
+        let typeColors = typeCategories.map(t => t.color);
+
+        let ticketLabels = ticketStates.map(t => t.name);
+        let ticketData = ticketStates.map(t => ticketStateDict[t.name.toLowerCase()] || 0);
+        let ticketColors = ticketStates.map(t => t.color);
+
+        // TypeOfProblem Pie Chart (Counterclockwise)
+        new Chart(document.getElementById("typeOfProblemChart"), {
+            type: "pie",
+            data: {
+                labels: typeLabels,
+                datasets: [{
+                    data: typeData,
+                    backgroundColor: typeColors
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Ensure full-circle display
+                rotation: -90, // Start from top and move counterclockwise
+                plugins: {
+                    legend: {
+                        position: 'left', // Keep labels left to right
+                        labels: {
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
+
+        // TicketState Pie Chart (Counterclockwise)
+        new Chart(document.getElementById("ticketStateChart"), {
+            type: "pie",
+            data: {
+                labels: ticketLabels,
+                datasets: [{
+                    data: ticketData,
+                    backgroundColor: ticketColors
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                rotation: -90, // Start from top and move counterclockwise
+                plugins: {
+                    legend: {
+                        position: 'left',
+                        labels: {
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
+
+        // Top 10 Agencies Bar Chart
+        new Chart(document.getElementById("agencyChart"), {
+            type: "bar",
+            data: {
+                labels: agencyData.map(x => x.Agency),
+                datasets: [{
+                    label: "หน่วยงานที่แจ้งเรื่องเข้ามา (10 อันดับ)",
+                    data: agencyData.map(x => x.Count),
+                    backgroundColor: "#36A2EB"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true }
+                }
+            }
+        });
+    });
+</script>
+
+<!-- Fix Chart Display -->
+<style>
+    canvas {
+        width: 100% !important;
+        height: 300px !important;
+    }
+</style>

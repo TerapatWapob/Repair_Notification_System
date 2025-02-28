@@ -84,7 +84,7 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label for="reportDate" class="form-label">วันที่แจ้ง</label>
-                    <input type="text" class="form-control" id="reportDate" value="@Model.StartDate" disabled/>
+                    <input type="text" class="form-control" id="reportDate" value="@(Model.StartDate.HasValue ? Model.StartDate.Value.ToString("dd-MM-yyyy") : "")" disabled />
                 </div>
                 <div class="col-md-6">
                     <label for="ticketState" class="form-label">สถานะตั๋ว</label>

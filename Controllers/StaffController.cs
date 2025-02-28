@@ -8,9 +8,24 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Repair_Notification_System.Controllers
 {
+    public static class PasswordHelper
+{
+    public static string HashPassword(string password)
+    {
+        using (SHA256 sha256 = SHA256.Create())
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(password);
+            byte[] hashBytes = sha256.ComputeHash(bytes);
+            return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
+        }
+    }
+}
+
     [Authorize]
     public class StaffController : Controller
     {
@@ -42,9 +57,11 @@ namespace Repair_Notification_System.Controllers
             // Load users into memory first
             var users = _context.Users.ToList(); 
 
-            // Now filter in memory (EF Core does not support StringComparison.Ordinal)
-            var user = users.FirstOrDefault(u => 
-                u.Username == username && u.Password == password);
+            // Hash the input password
+            var hashedPassword = PasswordHelper.HashPassword(password);
+
+            // Find user (case-sensitive comparison)
+            var user = users.FirstOrDefault(u => u.Username == username && u.Password == hashedPassword);
 
             if (user != null)
             {
@@ -72,6 +89,7 @@ namespace Repair_Notification_System.Controllers
             ViewBag.Error = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
             return View("Index"); 
         }
+
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -124,12 +142,22 @@ namespace Repair_Notification_System.Controllers
             var existingAdmin = _context.Users.Find(admin.ID);
             if (existingAdmin != null)
             {
-                existingAdmin.Name = admin.Name;
-                existingAdmin.Position = admin.Position;
-                existingAdmin.PhoneNumber = admin.PhoneNumber;
-                existingAdmin.Username = admin.Username;
+                // ✅ Only update fields if the new value is not empty
+                if (!string.IsNullOrWhiteSpace(admin.Name))
+                    existingAdmin.Name = admin.Name;
+
+                if (!string.IsNullOrWhiteSpace(admin.Position))
+                    existingAdmin.Position = admin.Position;
+
+                if (!string.IsNullOrWhiteSpace(admin.PhoneNumber))
+                    existingAdmin.PhoneNumber = admin.PhoneNumber;
+
+                if (!string.IsNullOrWhiteSpace(admin.Username))
+                    existingAdmin.Username = admin.Username;
+
                 _context.SaveChanges();
             }
+
             return RedirectToAction("AdminAccountManager");
         }
         [Authorize(Roles = "SystemAdmin")]
@@ -139,7 +167,7 @@ namespace Repair_Notification_System.Controllers
             var admin = _context.Users.Find(ID);
             if (admin != null)
             {
-                admin.Password = "12345678"; // Ideally, hash this password before saving
+                admin.Password = PasswordHelper.HashPassword("12345678"); // Hash before saving
                 _context.SaveChanges();
             }
             return RedirectToAction("AdminAccountManager");
@@ -173,10 +201,9 @@ namespace Repair_Notification_System.Controllers
                 Position = model.Position,
                 PhoneNumber = model.PhoneNumber,
                 Username = model.Username,
-                Password = model.Password, // ⚠️ Hash the password if needed
-                UserRole = UserRole.Admin  // Default role to Admin
+                Password = PasswordHelper.HashPassword(model.Password), // Hash here
+                UserRole = UserRole.Admin
             };
-
             _context.Users.Add(newAdmin);
 
             try
@@ -196,7 +223,7 @@ namespace Repair_Notification_System.Controllers
         {
             if (!User.Identity.IsAuthenticated)
             {
-                return RedirectToAction("Index"); // Redirect to login if not authenticated
+                return RedirectToAction("Index");
             }
 
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
@@ -215,93 +242,103 @@ namespace Repair_Notification_System.Controllers
 
             return View(user);
         }
-    // POST: Update Profile
-    [HttpPost]
-    [ValidateAntiForgeryToken]
-    public IActionResult UpdateProfile(string fullName, string position, string phone, string oldPassword, string newPassword, string confirmPassword)
-    {
-        if (!User.Identity.IsAuthenticated)
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdateProfile(string fullName, string position, string phone, string oldPassword, string newPassword, string confirmPassword)
         {
-            return RedirectToAction("Index"); // Redirect to login if not authenticated
-        }
-
-        var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userId))
-        {
-            return RedirectToAction("Index");
-        }
-
-        var user = _context.Users.FirstOrDefault(u => u.ID.ToString() == userId);
-
-        if (user == null)
-        {
-            return RedirectToAction("Index");
-        }
-
-        bool isUpdated = false; // Flag to track changes
-
-        // Update user details only if they are different
-        if (!string.IsNullOrWhiteSpace(fullName) && user.Name != fullName)
-        {
-            user.Name = fullName;
-            isUpdated = true;
-        }
-
-        if (!string.IsNullOrWhiteSpace(phone) && user.PhoneNumber != phone)
-        {
-            user.PhoneNumber = phone;
-            isUpdated = true;
-        }
-
-        if (!string.IsNullOrWhiteSpace(position) && user.Position != position)
-        {
-            user.Position = position;
-            isUpdated = true;
-        }
-
-        // Password Change Logic
-        if (!string.IsNullOrEmpty(oldPassword) && !string.IsNullOrEmpty(newPassword))
-        {
-            if (user.Password != oldPassword)
+            if (!User.Identity.IsAuthenticated)
             {
-                ViewBag.Error = "รหัสผ่านเดิมไม่ถูกต้อง";
-                return View("Profile", user);
+                return RedirectToAction("Index");
             }
 
-            if (newPassword.Length < 8)
+            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userId))
             {
-                ViewBag.Error = "รหัสผ่านใหม่ต้องมีอย่างน้อย 8 ตัวอักษร";
-                return View("Profile", user);
+                return RedirectToAction("Index");
             }
 
-            if (newPassword != confirmPassword)
+            var user = _context.Users.FirstOrDefault(u => u.ID.ToString() == userId);
+
+            if (user == null)
             {
-                ViewBag.Error = "รหัสผ่านใหม่ไม่ตรงกัน";
-                return View("Profile", user);
+                return RedirectToAction("Index");
             }
 
-            if (user.Password != newPassword) // Only update if it's actually different
+            bool isUpdated = false; // Flag to track changes
+            bool isPasswordUpdated = false; // Flag to check password update
+
+            // Update user details only if they are different
+            if (!string.IsNullOrWhiteSpace(fullName) && user.Name != fullName)
             {
-                user.Password = newPassword;
+                user.Name = fullName;
                 isUpdated = true;
             }
-        }
 
-        // Save only if something changed
-        if (isUpdated)
-        {
-            _context.SaveChanges();
-            ViewBag.Success = "อัปเดตข้อมูลสำเร็จ";
-        }
-        else
-        {
-            ViewBag.Error = "ไม่มีการเปลี่ยนแปลงข้อมูล"; // Show message if nothing changed
-        }
+            if (!string.IsNullOrWhiteSpace(phone) && user.PhoneNumber != phone)
+            {
+                user.PhoneNumber = phone;
+                isUpdated = true;
+            }
 
-        return View("Profile", user);
-    }
+            if (!string.IsNullOrWhiteSpace(position) && user.Position != position)
+            {
+                user.Position = position;
+                isUpdated = true;
+            }
 
+            // Password Change Logic
+            if (!string.IsNullOrEmpty(oldPassword) && !string.IsNullOrEmpty(newPassword))
+            {
+                if (user.Password != PasswordHelper.HashPassword(oldPassword))
+                {
+                    ViewBag.Error = "รหัสผ่านเดิมไม่ถูกต้อง";
+                    return View("Profile", user);
+                }
+
+                if (newPassword.Length < 8)
+                {
+                    ViewBag.Error = "รหัสผ่านใหม่ต้องมีอย่างน้อย 8 ตัวอักษร";
+                    return View("Profile", user);
+                }
+
+                if (newPassword != confirmPassword)
+                {
+                    ViewBag.Error = "รหัสผ่านใหม่ไม่ตรงกัน";
+                    return View("Profile", user);
+                }
+
+                string hashedNewPassword = PasswordHelper.HashPassword(newPassword);
+
+                if (user.Password != hashedNewPassword) // Only update if different
+                {
+                    user.Password = hashedNewPassword;
+                    isUpdated = true;
+                    isPasswordUpdated = true;
+                }
+            }
+
+            // Save changes if there were updates
+            if (isUpdated)
+            {
+                _context.SaveChanges();
+
+                if (isPasswordUpdated)
+                {
+                    ViewBag.Success = "อัปเดตรหัสผ่านสำเร็จ";
+                }
+                else
+                {
+                    ViewBag.Success = "อัปเดตข้อมูลสำเร็จ";
+                }
+            }
+            else
+            {
+                ViewBag.Info = "ไม่มีการเปลี่ยนแปลงข้อมูล"; // Show a neutral message
+            }
+
+            return View("Profile", user);
+        }
 
         public IActionResult AgencyManager()
         {
@@ -527,19 +564,48 @@ namespace Repair_Notification_System.Controllers
             return RedirectToAction("FinishTicket"); // Redirect to the same page
         }
 
-            // Report
-            public IActionResult Report()
-            {
-                return View();
-            }
+        [Authorize]
+        public IActionResult Report()
+        {
+            DateTime lastYear = DateTime.Now.AddDays(-365);
 
-            // Error Handling
-            [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-            public IActionResult Error()
-            {
-                return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-            }
+            // ✅ TypeOfProblem Pie Chart (Fixed)
+            var typeOfProblemData = _context.Tickets
+                .Where(t => t.StartDate >= lastYear && !string.IsNullOrEmpty(t.TypeOfProblem))
+                .GroupBy(t => t.TypeOfProblem)
+                .Select(g => new { Type = g.Key, Count = g.Count() })
+                .ToList();
+
+            // ✅ TicketState Pie Chart (Fixed: State is an enum, so we use ToString())
+            var ticketStateData = _context.Tickets
+                .Where(t => t.StartDate >= lastYear)
+                .GroupBy(t => t.State)
+                .Select(g => new { State = g.Key.ToString(), Count = g.Count() }) // ✅ Use ToString()
+                .ToList();
+
+            // ✅ Top 10 Agencies Bar Chart (Fixed)
+            var agencyData = _context.Tickets
+                .Where(t => t.StartDate >= lastYear)
+                .Join(
+                    _context.Agencies,
+                    t => t.AgencyID, 
+                    a => a.ID, 
+                    (t, a) => a.AgencyName // ✅ Change this to the actual column name in `Agencies`
+                )
+                .Where(name => !string.IsNullOrWhiteSpace(name))
+                .GroupBy(name => name.ToLower().Trim())
+                .Select(g => new { Agency = g.Key, Count = g.Count() })
+                .OrderByDescending(g => g.Count)
+                .Take(10)
+                .ToList();
+
+            ViewBag.TypeOfProblemData = typeOfProblemData;
+            ViewBag.TicketStateData = ticketStateData;
+            ViewBag.AgencyData = agencyData;
+
+            return View();
         }
+    }
 
         // Request models for Add, Edit, and Delete Agency
         public class EditAgencyRequest
