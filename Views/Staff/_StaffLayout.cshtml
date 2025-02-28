@@ -36,7 +36,7 @@
                         @if (!isLoggedIn)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Staff" asp-action="Index">เข้าสู่ระบบ</a>
+                                <a class="nav-link text-white" asp-controller="Staff" asp-action="Index">เข้าสู่ระบบ</a>
                             </li>
                         }
 
@@ -44,7 +44,7 @@
                         @if (isLoggedIn && userRole == "SystemAdmin")
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Staff" asp-action="AdminAccountManager">ระบบจัดการบัญชี Admin</a>
+                                <a class="nav-link text-white" asp-controller="Staff" asp-action="AdminAccountManager">ระบบจัดการบัญชี Admin</a>
                             </li>
                         }
 
@@ -52,24 +52,24 @@
                         @if (isLoggedIn)
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Staff" asp-action="Profile">โปรไฟล์และการจัดการบัญชี</a>
+                                <a class="nav-link text-white" asp-controller="Staff" asp-action="Profile">โปรไฟล์และการจัดการบัญชี</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Staff" asp-action="AgencyManager">จัดการรายชื่อหน่วยงาน</a>
+                                <a class="nav-link text-white" asp-controller="Staff" asp-action="AgencyManager">จัดการรายชื่อหน่วยงาน</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Staff" asp-action="TicketManager">จัดการรายการแจ้งซ่อมในระบบ</a>
+                                <a class="nav-link text-white" asp-controller="Staff" asp-action="TicketManager">จัดการรายการแจ้งซ่อมในระบบ</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Staff" asp-action="FinishTicket">รายการที่ดำเนินการเรียบร้อยแล้ว</a>
+                                <a class="nav-link text-white" asp-controller="Staff" asp-action="FinishTicket">รายการที่ดำเนินการเรียบร้อยแล้ว</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Staff" asp-action="Report">ผลการดำเนินงาน</a>
+                                <a class="nav-link text-white" asp-controller="Staff" asp-action="Report">ผลการดำเนินงาน</a>
                             </li>
 
                             <!-- Logout Button -->
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="Staff" asp-action="Logout" onclick="return confirm('คุณต้องการออกจากระบบ?');">ออกจากระบบ</a>
+                                <a class="nav-link text-white" asp-controller="Staff" asp-action="Logout" onclick="return confirm('คุณต้องการออกจากระบบ?');">ออกจากระบบ</a>
                             </li>
                         }
                     </ul>

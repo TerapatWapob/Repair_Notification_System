@@ -408,13 +408,29 @@ namespace Repair_Notification_System.Controllers
             }
             return Json(new { success = false, message = "Agency not found." });
         }
-        public IActionResult TicketManager()
+        public IActionResult TicketManager(string searchTerm)
         {
-            var unfinishedTickets = _context.Tickets
-                 .Where(t => t.State != TicketState.ดำเนินการเสร็จสิ้น)
-                  .ToList();
-                return View(unfinishedTickets);
+            var tickets = _context.Tickets
+                .Where(t => t.State != TicketState.ดำเนินการเสร็จสิ้น) // Exclude completed tickets
+                .AsQueryable();
+
+            // Filter by search term if provided
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                tickets = tickets.Where(t => t.Topic.Contains(searchTerm));
+            }
+
+            // Enum-based sorting (Primary: State, Secondary: Oldest StartDate first)
+            var orderedTickets = tickets
+                .OrderBy(t => t.State == TicketState.รับเรื่องร้องเรียน ? 1 :
+                            t.State == TicketState.อยู่ระหว่างดำเนินการ ? 2 : 3) // No need for "ดำเนินการเสร็จสิ้น"
+                .ThenBy(t => t.StartDate) // Oldest tickets appear first
+                .ToList();
+
+            return View(orderedTickets);
         }
+
+
         public IActionResult TicketManagerEdit(int id)
         {
             var ticket = _context.Tickets
@@ -497,10 +513,24 @@ namespace Repair_Notification_System.Controllers
             _context.SaveChanges();
             return RedirectToAction("TicketManager"); // Change this to your actual view
         }
-        public IActionResult FinishTicket()
+        public IActionResult FinishTicket(string searchTerm)
         {
-            var finishedTickets = _context.Tickets.Where(t => t.State == TicketState.ดำเนินการเสร็จสิ้น).ToList();
-            return View(finishedTickets);
+            var finishedTickets = _context.Tickets
+                .Where(t => t.State == TicketState.ดำเนินการเสร็จสิ้น);
+
+            // Filter by search term
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                finishedTickets = finishedTickets.Where(t => t.Topic.Contains(searchTerm));
+            }
+
+            // Sorting: Primary -> EndDate (Latest First), Secondary -> ID (Latest First)
+            var orderedTickets = finishedTickets
+                .OrderByDescending(t => t.EndDate ?? DateTime.MinValue)  // Newest EndDate first
+                .ThenByDescending(t => t.ID)  // Newest ID first
+                .ToList();
+
+            return View(orderedTickets);
         }
         
         public IActionResult FinishTicketDetail(long id)

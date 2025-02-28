@@ -70,18 +70,20 @@
     }
 </script>
 
-<br><br>
-
 @{
     int index = 1;  
-    var today = DateTime.Today;
 }
-
+<br><br>
 <div class="container mt-5">
     <div class="header w-100">
         <h2>ระบบจัดการรายการแจ้งซ่อมในระบบ</h2>
     </div>
-
+    <form method="get" asp-action="TicketManager" asp-controller="Staff" class="">
+        <div class="input-group">
+            <input type="text" name="searchTerm" class="form-control" placeholder="ค้นหาตามชื่อเรื่อง..." value="@Context.Request.Query["searchTerm"]">
+            <button type="submit" class="btn btn-primary">🔍 ค้นหา</button>
+        </div>
+    </form>
     <div class="subheader row text-center m-0">
         <div class="col-1">รายการที่</div>
         <div class="col-2">เรื่อง</div>
@@ -95,7 +97,7 @@
 
     <!-- Content -->
     <div class="content">
-        @foreach (var ticket in Model.OrderByDescending(t => t.ID))
+        @foreach (var ticket in Model)
         {
             <div class="row text-center m-0">
                 <div class="col-1">@index</div>
@@ -120,9 +122,11 @@
             </div>
             index++;
         }
+        
+        <!-- Bulk Actions -->
         <div class="text-end mt-3">
             <form asp-action="DeleteAllTickets" asp-controller="Staff" method="post" onsubmit="confirmDeleteAll(event)" class="d-inline">
-            <button type="submit" class="btn btn-danger">🗑️ ลบทั้งหมด</button>
+                <button type="submit" class="btn btn-danger">🗑️ ลบทั้งหมด</button>
             </form>
             <form asp-action="MarkAllAsCompleted" asp-controller="Staff" method="post" onsubmit="confirmCompleteAll(event)" class="d-inline">
                 <button type="submit" class="btn btn-success">✅ เสร็จสิ้นทั้งหมด</button>

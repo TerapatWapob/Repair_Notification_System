@@ -1,64 +1,71 @@
 ﻿@{
-    Layout = "_StaffLayout"; // Specify a custom layout
+    Layout = "_StaffLayout";
 }
 @model List<RPS_DB.Models.Ticket>
 
 <style>
-.header {
-    background-color: #007BFF;
-    color: white;
-    text-align: center;
-    padding: 10px 15px;
-    border-radius: 10px 10px 0 0;
-    text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
-    font-size: 1.5rem;
-    width: 100%;
-    box-sizing: border-box;
-}
+    .header {
+        background-color: #007BFF;
+        color: white;
+        text-align: center;
+        padding: 10px 15px;
+        border-radius: 10px 10px 0 0;
+        text-shadow: -1px -1px 0 black, 1px -1px 0 black, -1px 1px 0 black, 1px 1px 0 black;
+        font-size: 1.5rem;
+        width: 100%;
+        box-sizing: border-box;
+    }
 
-.subheader {
-    background-color: #f0f8ff;
-    padding: 10px 5px;
-    font-weight: bold;
-    font-size: 1rem;
-    width: 100%;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+    .subheader {
+        background-color: #f0f8ff;
+        padding: 10px 5px;
+        font-weight: bold;
+        font-size: 1rem;
+        width: 100%;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-.content {
-    background-color: white;
-    padding: 10px 5px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 100%;
-}
+    .content {
+        background-color: white;
+        padding: 10px 5px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        width: 100%;
+    }
 
-.content .row {
-    padding: 5px 15px;
-    align-items: center;
-}
+    .content .row {
+        padding: 5px 15px;
+        align-items: center;
+    }
 
-.content .col {
-    border: 0px solid #ddd;
-    padding: 5px 5px;
-    text-align: center;
-}
+    .content .col {
+        border: 0px solid #ddd;
+        padding: 5px 5px;
+        text-align: center;
+    }
 </style>
 
 <br><br>
 
 @{
-    int index = 1;  
+    int index = 1;
     var today = DateTime.Today;
-    var sortedTickets = Model.OrderByDescending(ticket => ticket.ID);
 }
 
 <div class="container mt-5">
     <div class="header">
         <h2>รายการที่ดำเนินการเรียบร้อยแล้ว</h2>
     </div>
+
+    <!-- Search Bar -->
+    <form method="get" asp-action="FinishTicket" asp-controller="Staff" class="">
+        <div class="input-group">
+            <input type="text" name="searchTerm" class="form-control" placeholder="ค้นหาตามชื่อเรื่อง..." value="@Context.Request.Query["searchTerm"]">
+            <button type="submit" class="btn btn-primary">🔍 ค้นหา</button>
+        </div>
+    </form>
 
     <div class="subheader text-center">
         <div class="col-1">รายการที่</div>
@@ -71,7 +78,7 @@
     </div>
 
     <div class="content">
-        @foreach (var ticket in sortedTickets)
+        @foreach (var ticket in Model)
         {
             if (ticket.EndDate.HasValue && (today - ticket.EndDate.Value).TotalDays <= 365)
             {
@@ -96,13 +103,14 @@
                 index++;
             }
         }
-            <!-- DELETE ALL BUTTON -->
-    <div class="text-end mt-2">
-        <form method="post" asp-action="DeleteAllFinishTickets" asp-controller="Staff">
-            <button type="submit" class="btn btn-danger" onclick="return confirm('คุณต้องการลบตั๋วที่ดำเนินการเสร็จสิ้นทั้งหมดหรือไม่? นี่เป็นการกระทำที่ไม่สามารถย้อนกลับได้!');">
-                🗑️ ลบทั้งหมด
-            </button>
-        </form>
-    </div>
+
+        <!-- DELETE ALL BUTTON -->
+        <div class="text-end mt-2">
+            <form method="post" asp-action="DeleteAllFinishTickets" asp-controller="Staff">
+                <button type="submit" class="btn btn-danger" onclick="return confirm('คุณต้องการลบตั๋วที่ดำเนินการเสร็จสิ้นทั้งหมดหรือไม่? นี่เป็นการกระทำที่ไม่สามารถย้อนกลับได้!');">
+                    🗑️ ลบทั้งหมด
+                </button>
+            </form>
+        </div>
     </div>
 </div>
