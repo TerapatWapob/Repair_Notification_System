@@ -39,13 +39,26 @@ namespace Repair_Notification_System.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            var userRole = HttpContext.Session.GetString("UserRole");
+            // Clear session and sign out user
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear();
 
+            // Redirect only once to refresh the session state
+            if (!HttpContext.Request.Cookies.ContainsKey("SessionRefreshed"))
+            {
+                Response.Cookies.Append("SessionRefreshed", "true", new CookieOptions { Expires = DateTimeOffset.Now.AddSeconds(2) });
+                return RedirectToAction("Index"); // Redirect once
+            }
+
+            // Remove the temporary cookie after redirect
+            Response.Cookies.Delete("SessionRefreshed");
+
+            var userRole = HttpContext.Session.GetString("UserRole");
             if (!string.IsNullOrEmpty(userRole))
             {
-                return RedirectToAction("TicketManager"); // Redirect if already logged in
+                return RedirectToAction("TicketManager", "Staff"); // Redirect if already logged in
             }
 
             return View();
