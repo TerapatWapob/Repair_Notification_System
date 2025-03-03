@@ -308,6 +308,7 @@ namespace Repair_Notification_System
                     Topic = "Login Issue",
                     TypeOfProblem = "ปัญหาเกี่ยวกับฮาร์ดแวร์/อุปกรณ์",
                     ProblemDescription = "Unable to log into the system.",
+                    AgentComment ="Test",
                     State = TicketState.รับเรื่องร้องเรียน,
                     AgencyID = 1
                 },
@@ -322,6 +323,7 @@ namespace Repair_Notification_System
                     Topic = "System Crash",
                     TypeOfProblem = "ปัญหาเกี่ยวกับฮาร์ดแวร์/อุปกรณ์",
                     ProblemDescription = "System crashes when opening the dashboard.",
+                    AgentComment ="Test",
                     State = TicketState.อยู่ระหว่างดำเนินการ,
                     AgencyID = 2
                 },
@@ -336,6 +338,7 @@ namespace Repair_Notification_System
                     Topic = "System Crash",
                     TypeOfProblem = "ปัญหาเกี่ยวกับซอฟต์แวร์",
                     ProblemDescription = "System crashes when opening the dashboard.",
+                    AgentComment ="Test",
                     State = TicketState.ดำเนินการเสร็จสิ้น,
                     AgencyID = 2
                 },
@@ -350,6 +353,7 @@ namespace Repair_Notification_System
                     Topic = "System Crash",
                     TypeOfProblem = "ปัญหาด้านเครือข่าย",
                     ProblemDescription = "System crashes when opening the dashboard.",
+                    AgentComment ="Test",
                     State = TicketState.ดำเนินการเสร็จสิ้น,
                     AgencyID = 2
                 },
@@ -364,6 +368,7 @@ namespace Repair_Notification_System
                     Topic = "System Crash",
                     TypeOfProblem = "อื่นๆ",
                     ProblemDescription = "System crashes when opening the dashboard.",
+                    AgentComment ="Test",
                     State = TicketState.ดำเนินการเสร็จสิ้น,
                     AgencyID = 2
                 }

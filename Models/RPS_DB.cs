@@ -60,6 +60,7 @@ public class Agency
         public required string TypeOfProblem { get; set; }
 
         public required string ProblemDescription { get; set; }
+        public string? AgentComment { get; set; }
 
         [Required]
         public TicketState State { get; set; }
