@@ -9,4 +9,5 @@ public class TicketDetailViewModel
     public DateTime StartDate { get; set; }  // Non-nullable DateTime
     public DateTime EndDate { get; set; }    // Non-nullable DateTime
     public required string ProblemDescription { get; set; }
+    public string? AgentComment { get; set; }
 }

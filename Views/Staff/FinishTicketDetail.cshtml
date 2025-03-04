@@ -86,6 +86,10 @@
             <label class="form-label">ปัญหาที่พบ</label>
             <textarea class="form-control" rows="4" disabled>@Model.ProblemDescription</textarea>
         </div>
+        <div class="mb-3">
+            <label class="form-label">ข้อความจากเจ้าหน้าที่ (ข้อความนี้จะถูกแสดงผู้ให้งานเห็นทุกคน)</label>
+            <textarea class="form-control" rows="4" disabled>@Model.AgentComment</textarea>
+        </div>
         <div style="display: flex; justify-content: flex-end;">
             <a href="@Url.Action("FinishTicket", "Staff")" class="btn btn-primary">ย้อนกลับ</a>
         </div>

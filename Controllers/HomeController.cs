@@ -42,6 +42,29 @@ namespace Repair_Notification_System.Controllers
             // Pass the tickets to the view
             return View(tickets);
         }
+        public IActionResult FAQ(string searchTerm)
+        {
+            // Start querying the tickets
+            var ticketsQuery = _context.Tickets.AsQueryable();
+
+            // Apply search if there's a search term
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                ticketsQuery = ticketsQuery.Where(t => t.Name.Contains(searchTerm));
+            }
+
+            // Sort by StartDate (Descending) - latest tickets first
+            ticketsQuery = ticketsQuery.OrderByDescending(t => t.StartDate);
+
+            // Get all tickets
+            var tickets = ticketsQuery.ToList();
+
+            // Set the searchTerm in ViewData to keep it after the form submission
+            ViewData["SearchTerm"] = searchTerm;
+
+            // Pass the tickets to the view
+            return View(tickets);
+        }
 
     public IActionResult Repair()
     {

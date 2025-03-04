@@ -94,9 +94,12 @@
             <div class="mb-3">
                 <label for="problemDescription" class="form-label">ปัญหาที่พบ</label>
                 <textarea class="form-control" id="problemDescription" rows="4" disabled>@Model.ProblemDescription</textarea>
-            </div>
             <form method="post" asp-action="UpdateTicketStatus" asp-controller="Staff">
                 <input type="hidden" name="id" value="@Model.ID" />
+                <div class="mb-3">
+                    <label for="agentComment" class="form-label">ข้อความจากเจ้าหน้าที่ (ข้อความนี้จะถูกแสดงผู้ให้งานเห็นทุกคน)</label>
+                    <textarea class="form-control" id="agentComment" name="agentComment" rows="4">@Model.AgentComment</textarea>
+                </div>
                 <div style="display: flex; justify-content: flex-end;">
                     <button type="submit" class="btn" style="background-color: rgb(0, 149, 199); color: white;"
                         name="newStatus" value="รับเรื่องร้องเรียน">เปลี่ยนสถานะเป็นรับเรื่องร้องเรียน</button>&nbsp;&nbsp;

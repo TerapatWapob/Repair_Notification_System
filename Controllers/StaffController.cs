@@ -479,13 +479,16 @@ namespace Repair_Notification_System.Controllers
             return RedirectToAction("TicketManager");
         }
         [HttpPost]
-        public IActionResult UpdateTicketStatus(long id, string newStatus)
+        public IActionResult UpdateTicketStatus(long id, string newStatus, string agentComment)
         {
             var ticket = _context.Tickets.FirstOrDefault(t => t.ID == id);
             if (ticket == null)
             {
                 return NotFound();
             }
+
+            // Update the AgentComment
+            ticket.AgentComment = agentComment; // Use the parameter here
 
             // Convert newStatus (string) to TicketState (enum)
             if (Enum.TryParse(typeof(TicketState), newStatus, out var parsedState))
@@ -505,6 +508,7 @@ namespace Repair_Notification_System.Controllers
 
             return BadRequest("Invalid status provided"); // Handle invalid values
         }
+        
         [HttpPost]
         public IActionResult DeleteAllTickets()
         {
@@ -574,7 +578,8 @@ namespace Repair_Notification_System.Controllers
                 PhoneNumber = ticket.PhoneNumber,
                 StartDate = ticket.StartDate.Value, // Non-nullable
                 EndDate = ticket.EndDate.Value,     // Non-nullable
-                ProblemDescription = ticket.ProblemDescription
+                ProblemDescription = ticket.ProblemDescription,
+                AgentComment = ticket.AgentComment
             };
 
             return View(model);
