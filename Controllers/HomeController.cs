@@ -50,7 +50,7 @@ namespace Repair_Notification_System.Controllers
             // Apply search if there's a search term
             if (!string.IsNullOrEmpty(searchTerm))
             {
-                ticketsQuery = ticketsQuery.Where(t => t.Name.Contains(searchTerm));
+                ticketsQuery = ticketsQuery.Where(t => t.Topic.Contains(searchTerm));
             }
 
             // Sort by StartDate (Descending) - latest tickets first

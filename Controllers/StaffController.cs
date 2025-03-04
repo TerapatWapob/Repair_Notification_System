@@ -613,27 +613,36 @@ namespace Repair_Notification_System.Controllers
         }
 
         [Authorize]
-        public IActionResult Report()
+        public IActionResult Report(string? startDate, string? endDate)
         {
-            DateTime lastYear = DateTime.Now.AddDays(-365);
+            DateTime sDate = DateTime.Now.AddMonths(-1);
+            DateTime eDate = DateTime.Now;
+            if(!string.IsNullOrEmpty(startDate) && !string.IsNullOrEmpty(endDate)){
+            sDate = DateTime.ParseExact(startDate, "dd/MM/yyyy", new System.Globalization.CultureInfo("TH-th"));
+            eDate = DateTime.ParseExact(endDate, "dd/MM/yyyy", new System.Globalization.CultureInfo("TH-th"));
+            }
+             TempData["sDate"] = sDate;
+             TempData["eDate"] = eDate;
+            //  TempData["dd"] = eDate;
+            // DateTime lastYear = DateTime.Now.AddDays(-365);
 
             // ✅ TypeOfProblem Pie Chart (Fixed)
             var typeOfProblemData = _context.Tickets
-                .Where(t => t.StartDate >= lastYear && !string.IsNullOrEmpty(t.TypeOfProblem))
+                .Where(t => t.StartDate >= sDate && t.StartDate <= eDate && !string.IsNullOrEmpty(t.TypeOfProblem))
                 .GroupBy(t => t.TypeOfProblem)
                 .Select(g => new { Type = g.Key, Count = g.Count() })
                 .ToList();
 
             // ✅ TicketState Pie Chart (Fixed: State is an enum, so we use ToString())
             var ticketStateData = _context.Tickets
-                .Where(t => t.StartDate >= lastYear)
+                .Where(t => t.StartDate >= sDate && t.StartDate <= eDate )
                 .GroupBy(t => t.State)
                 .Select(g => new { State = g.Key.ToString(), Count = g.Count() }) // ✅ Use ToString()
                 .ToList();
 
             // ✅ Top 10 Agencies Bar Chart (Fixed)
             var agencyData = _context.Tickets
-                .Where(t => t.StartDate >= lastYear)
+                .Where(t => t.StartDate >= sDate && t.StartDate <= eDate )
                 .Join(
                     _context.Agencies,
                     t => t.AgencyID, 

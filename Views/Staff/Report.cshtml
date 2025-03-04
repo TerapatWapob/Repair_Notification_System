@@ -13,11 +13,51 @@
     var ticketStateJson = JsonSerializer.Serialize(ticketStateData);
     var agencyJson = JsonSerializer.Serialize(agencyData);
 }
+<!-- Flatpickr CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+<!-- Flatpickr JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
 <br>
 <br>
 <div class="container">
     <h1 class="text-center">📊 Report</h1>
-    <h4 class="text-center">(ผลการดำเนินงานใน 365 วันที่ผ่านมา)</h4>
+    <h4 class="text-center">(ผลการดำเนินงาน)</h4>
+
+    <div class="container mt-4">
+    <form method="get" asp-action="Report" asp-controller="Staff">
+    <div class="row mb-3">
+        <!-- Date Inputs -->
+        <div class="col-md-5">
+            <label for="startDate">จากวันที่</label>
+            <input type="text" class="form-control datepicker" id="startDate" name="startDate" placeholder="dd/mm/yyyy" value="@TempData["sDate"]">
+        </div>
+        <div class="col-md-5">
+            <label for="endDate">ถึงวันที่</label>
+            <input type="text" class="form-control datepicker" id="endDate" name="endDate" placeholder="dd/mm/yyyy" value="@TempData["eDate"]">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-success mt-4">ค้นหา</button>
+        </div>
+    </div>
+    </form>
+    @* <div class="row mt-3">
+        <!-- Textboxes -->
+        <div class="col-md-6">
+            <label for="textbox1">Textbox 1</label>
+            <input type="text" class="form-control" id="textbox1" name="textbox1">
+        </div>
+        <div class="col-md-6">
+            <label for="textbox2">Textbox 2</label>
+            <input type="text" class="form-control" id="textbox2" name="textbox2">
+        </div>
+    </div> *@
+</div>
+@* @TempData["dd"] *@
+
+
+
     <div class="row">
         <!-- TypeOfProblem Pie Chart -->
         <div class="col-md-6">
@@ -156,3 +196,14 @@
         height: 300px !important;
     }
 </style>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Initialize Flatpickr
+        flatpickr(".datepicker", {
+            dateFormat: "d/m/Y", // Set the date format to dd/mm/yyyy
+            allowInput: true, // Allow manual input
+            clickOpens: false, // Disable calendar popup
+            "locale": "th" // Optional: Set locale to Thai (if needed)
+        });
+    });
+</script>

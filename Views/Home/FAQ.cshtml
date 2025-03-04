@@ -30,11 +30,11 @@
 <br>
 
 <div class="text-left d-flex justify-content-between align-items-center">
-    <h4>รายการแจ้งซ่อมในระบบ</h4>
+    <h4>รายการแจ้งซ่อมที่ได้รับการแก้ไขแล้ว</h4>
     <div class="input-group input-group-sm" style="max-width: 300px;">
-        @using (Html.BeginForm("Index", "Home", FormMethod.Get, new { @class = "d-flex w-100" }))
+        @using (Html.BeginForm("FAQ", "Home", FormMethod.Get, new { @class = "d-flex w-100" }))
         {
-            <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]" class="form-control form-control-sm" placeholder="ค้นหาจากชื่อผู้แจ้งซ่อม" aria-label="Search">
+            <input type="text" name="searchTerm" value="@ViewData["SearchTerm"]" class="form-control form-control-sm" placeholder="ค้นหาจากชื่อปัญหาที่คุณพบ" aria-label="Search">
             <button class="btn btn-primary text-white btn-sm"  type="submit" style="width: 120px;">
                 <i class="fas fa-search me-1" style="font-size: 1rem;"> </i> ค้นหา
             </button>
